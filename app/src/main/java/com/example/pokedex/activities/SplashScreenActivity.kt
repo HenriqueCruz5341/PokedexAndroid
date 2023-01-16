@@ -6,7 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.postDelayed
 import androidx.lifecycle.ViewModelProvider
 import com.example.pokedex.activities.viewModel.SplashScreenViewModel
 import com.example.pokedex.databinding.ActivitySplashScreenBinding
@@ -23,7 +25,6 @@ class SplashScreenActivity : AppCompatActivity() {
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         splashScreenVM = ViewModelProvider(this)[SplashScreenViewModel::class.java]
-        splashScreenVM.requestPokemons()
 
         supportActionBar?.hide()
 
@@ -40,18 +41,23 @@ class SplashScreenActivity : AppCompatActivity() {
         lockPokeballAnim.duration = 2000L
         lockPokeballAnim.interpolator = android.view.animation.AccelerateDecelerateInterpolator()
 
-        //while(!splashScreenVM.getPokemonsLoaded()) continue
+        splashScreenVM.requestPokemons(object: MyCallback {
+            override fun run () {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    topPageAnim.start()
+                    lockPokeballAnim.start()
+                }, 1000L)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            topPageAnim.start()
-            lockPokeballAnim.start()
-        }, 1000L)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-            finish()
-        }, 3200L)
-
+                Handler(Looper.getMainLooper()).postDelayed({
+                    startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java))
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    finish()
+                }, 3200L)
+            }
+        })
     }
+}
+
+interface MyCallback {
+    fun run()
 }

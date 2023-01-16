@@ -1,8 +1,10 @@
 package com.example.pokedex.activities.viewModel
 
+import android.animation.ObjectAnimator
 import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.AndroidViewModel
+import com.example.pokedex.activities.MyCallback
 import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableDto
 import com.example.pokedex.repository.api.service.PokeApiService
@@ -13,6 +15,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
 class SplashScreenViewModel(application: Application): AndroidViewModel(application) {
 
     private var pokemonsLoaded: Boolean = false
@@ -21,16 +24,17 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         return pokemonsLoaded
     }
 
-    fun requestPokemons() {
+    fun requestPokemons(callback: MyCallback) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
         val pokeApi: Call<PageableDto> = apiPokeService.getPokemonPageable(0 , 30)
         pokeApi.enqueue(object : Callback<PageableDto> {
             override fun onResponse(
                 call: Call<PageableDto>,
-                response: Response<PageableDto>
+                response: Response<PageableDto>,
             ) {
                 pokemonsLoaded = true
                 savePokemons(response.body()!!)
+                callback.run()
             }
             //TODO: Handle error
             override fun onFailure(call: Call<PageableDto>, t: Throwable) {
