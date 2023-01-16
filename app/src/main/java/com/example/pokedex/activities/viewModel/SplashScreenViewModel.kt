@@ -1,16 +1,15 @@
 package com.example.pokedex.activities.viewModel
 
-import android.animation.ObjectAnimator
 import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.AndroidViewModel
-import com.example.pokedex.activities.MyCallback
 import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableDto
 import com.example.pokedex.repository.api.service.PokeApiService
 import com.example.pokedex.repository.database.client.ClientDatabase
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.utils.Constants
+import com.example.pokedex.utils.MyCallback
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

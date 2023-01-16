@@ -6,13 +6,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.postDelayed
 import androidx.lifecycle.ViewModelProvider
 import com.example.pokedex.activities.viewModel.SplashScreenViewModel
 import com.example.pokedex.databinding.ActivitySplashScreenBinding
-import java.io.Serializable
+import com.example.pokedex.utils.MyCallback
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
@@ -56,8 +54,4 @@ class SplashScreenActivity : AppCompatActivity() {
             }
         })
     }
-}
-
-interface MyCallback {
-    fun run()
 }
