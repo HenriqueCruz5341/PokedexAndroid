@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.databinding.FragmentHomeBinding
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
@@ -31,7 +32,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.recyclerListPokemons.layoutManager = LinearLayoutManager(context)
+        binding.recyclerListPokemons.layoutManager = GridLayoutManager(context, 3)
         binding.recyclerListPokemons.adapter = pokemonsAdapter
 
         val listener = object : OnPokemonListener {
