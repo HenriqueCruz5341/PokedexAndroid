@@ -8,6 +8,8 @@ import com.example.pokedex.repository.api.model.PageableDto
 import com.example.pokedex.repository.api.service.PokeApiService
 import com.example.pokedex.repository.database.client.ClientDatabase
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
+import com.example.pokedex.repository.database.model.TypeEntity
+import com.example.pokedex.repository.database.model.TypeRelationEntity
 import com.example.pokedex.utils.Constants
 import com.example.pokedex.utils.MyCallback
 import retrofit2.Call
@@ -17,12 +19,6 @@ import retrofit2.Response
 
 class SplashScreenViewModel(application: Application): AndroidViewModel(application) {
 
-    private var pokemonsLoaded: Boolean = false
-
-    fun getPokemonsLoaded(): Boolean {
-        return pokemonsLoaded
-    }
-
     fun requestPokemons(callback: MyCallback) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
         val pokeApi: Call<PageableDto> = apiPokeService.getPokemonPageable(0 , 30)
@@ -31,13 +27,11 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
                 call: Call<PageableDto>,
                 response: Response<PageableDto>,
             ) {
-                pokemonsLoaded = true
                 savePokemons(response.body()!!)
                 callback.run()
             }
             //TODO: Handle error
             override fun onFailure(call: Call<PageableDto>, t: Throwable) {
-                pokemonsLoaded = false
             }
         })
     }
@@ -60,6 +54,60 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
                     db.insert(pokemonPageable)
                 else
                     db.update(pokemonPageable)
+
+            } catch (e: SQLiteConstraintException){
+                msg = Constants.BD_MSGS.CONSTRAINT
+            } catch (e: Exception) {
+                msg = Constants.BD_MSGS.FAIL
+            } finally {
+                if(msg != 0) {
+                    println("Erro ao inserir no banco, code: $msg")
+                    msg = 0
+                }
+            }
+        }
+    }
+
+    fun saveTypes() {
+        val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
+        val dbTypesRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
+        var msg = 0
+
+        if(dbTypes.getAll().isEmpty()) {
+            try {
+                val type1 = TypeEntity().apply {
+                    id = 1
+                    name = "fire"
+                }
+                val type2 = TypeEntity().apply {
+                    id = 2
+                    name = "water"
+                }
+
+                dbTypes.insert(type1)
+                dbTypes.insert(type2)
+
+            } catch (e: SQLiteConstraintException){
+                msg = Constants.BD_MSGS.CONSTRAINT
+            } catch (e: Exception) {
+                msg = Constants.BD_MSGS.FAIL
+            } finally {
+                if(msg != 0) {
+                    println("Erro ao inserir no banco, code: $msg")
+                    msg = 0
+                }
+            }
+        }
+
+        if(dbTypesRelation.getAll().isEmpty()) {
+            try {
+                val typeRelation = TypeRelationEntity().apply {
+                    atack_id = 1
+                    defense_id = 2
+                    multiplaier = 0.5f
+                }
+
+                dbTypesRelation.insert(typeRelation)
 
             } catch (e: SQLiteConstraintException){
                 msg = Constants.BD_MSGS.CONSTRAINT

@@ -8,6 +8,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="pokemon_image">PokemonImage</string>
     <string name="pokemon_name">PokemonName</string>
+    <string name="type_name">TypeName</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

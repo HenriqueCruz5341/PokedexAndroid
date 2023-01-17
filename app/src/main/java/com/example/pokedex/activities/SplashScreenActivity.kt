@@ -23,7 +23,6 @@ class SplashScreenActivity : AppCompatActivity() {
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         splashScreenVM = ViewModelProvider(this)[SplashScreenViewModel::class.java]
-
         supportActionBar?.hide()
 
         val topPage = binding.topPage
@@ -39,6 +38,7 @@ class SplashScreenActivity : AppCompatActivity() {
         lockPokeballAnim.duration = 2000L
         lockPokeballAnim.interpolator = android.view.animation.AccelerateDecelerateInterpolator()
 
+        splashScreenVM.saveTypes()
         splashScreenVM.requestPokemons(object: MyCallback {
             override fun run () {
                 Handler(Looper.getMainLooper()).postDelayed({
