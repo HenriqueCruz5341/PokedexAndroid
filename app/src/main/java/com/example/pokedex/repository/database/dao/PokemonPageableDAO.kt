@@ -18,6 +18,9 @@ interface PokemonPageableDAO {
     @Query("SELECT * FROM PokemonPageable")
     fun getAll(): List<PokemonPageableEntity>
 
+    @Query("SELECT * FROM PokemonPageable ORDER BY id LIMIT :limit OFFSET :offset")
+    fun getPagination(offset: Int, limit: Int): List<PokemonPageableEntity>
+
     @Query("SELECT * FROM PokemonPageable WHERE id = :id")
     fun getById(id: Int): PokemonPageableEntity?
 

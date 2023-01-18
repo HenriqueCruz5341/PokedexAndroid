@@ -10,7 +10,12 @@ import java.net.URL
 import java.util.concurrent.Executors
 
 class ListPokemonViewHolder(private val binding: PokemonLineBinding, private val listener: OnPokemonListener) : RecyclerView.ViewHolder(binding.root) {
-    fun bindVH(pokemon: PokemonPageableEntity){
+
+    fun getBinding(): PokemonLineBinding {
+        return binding
+    }
+
+    fun bindVH(pokemon: PokemonPageableEntity) {
         val executor = Executors.newSingleThreadExecutor()
         val handler = Handler(Looper.getMainLooper())
         executor.execute {
@@ -21,8 +26,7 @@ class ListPokemonViewHolder(private val binding: PokemonLineBinding, private val
                 handler.post {
                     binding.pokemonImage.setImageBitmap(image)
                 }
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -35,5 +39,4 @@ class ListPokemonViewHolder(private val binding: PokemonLineBinding, private val
             listener.onClick(pokemon)
         }
     }
-
 }

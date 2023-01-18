@@ -11,7 +11,7 @@ import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.repository.database.model.TypeEntity
 import com.example.pokedex.repository.database.model.TypeRelationEntity
 
-@Database(entities = [PokemonPageableEntity::class, TypeEntity::class, TypeRelationEntity::class], version = 1)
+@Database(entities = [PokemonPageableEntity::class, TypeEntity::class, TypeRelationEntity::class], version = 2)
 abstract class ClientDatabase : RoomDatabase() {
 
     abstract fun PokemonPageableDAO(): PokemonPageableDAO
@@ -30,6 +30,7 @@ abstract class ClientDatabase : RoomDatabase() {
 
                     INSTANCE = Room.databaseBuilder(context, ClientDatabase::class.java, "mydatabase.db")
                         .allowMainThreadQueries()
+                        .fallbackToDestructiveMigration()
                         .build()
                 }
             }

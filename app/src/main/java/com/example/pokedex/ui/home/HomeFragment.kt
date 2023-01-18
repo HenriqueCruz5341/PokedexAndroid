@@ -1,6 +1,9 @@
 package com.example.pokedex.ui.home
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.databinding.FragmentHomeBinding
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.ui.recycleView.pokemon.ListPokemonAdapter
 import com.example.pokedex.ui.recycleView.pokemon.OnPokemonListener
+import com.example.pokedex.ui.recycleView.pokemon.PaginationScrollListener
 
 class HomeFragment : Fragment() {
 
@@ -20,6 +25,12 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private val pokemonsAdapter = ListPokemonAdapter()
     private val binding get() = _binding!!
+    private val offsetStart: Int = 0
+    private var isLoading: Boolean = false
+    private var isLastOffset: Boolean = false
+    private var lastOffset: Int = offsetStart
+    private var currentOffset: Int = offsetStart
+    private var limit: Int = 30
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,6 +42,14 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        initRecyclerListPokemons()
+
+        setObserver()
+
+        return root
+    }
+
+    private fun initRecyclerListPokemons() {
         binding.recyclerListPokemons.layoutManager = GridLayoutManager(context, 3)
         binding.recyclerListPokemons.adapter = pokemonsAdapter
 
@@ -41,16 +60,48 @@ class HomeFragment : Fragment() {
         }
         pokemonsAdapter.setListener(listener)
 
-        homeViewModel.getAllPokemons()
+        loadNextPage()
 
-        setObserver()
+        binding.recyclerListPokemons.addOnScrollListener(object : PaginationScrollListener(binding.recyclerListPokemons.layoutManager as GridLayoutManager) {
+            override fun loadMoreItems() {
+                isLoading = true
+                currentOffset += limit
 
-        return root
+                Handler(Looper.myLooper()!!).postDelayed({
+                    loadNextPage()
+                }, 1000)
+            }
+
+            override fun getLastOffset(): Int {
+                return lastOffset
+            }
+
+            override fun isLastOffset(): Boolean {
+                return isLastOffset
+            }
+
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
+
+        })
+    }
+
+    fun loadNextPage() {
+        homeViewModel.loadPokemons(currentOffset, limit)
     }
 
     private fun setObserver() {
         homeViewModel.getPokemonList().observe(viewLifecycleOwner, Observer {
-            pokemonsAdapter.updatePokemonList(it)
+//            Log.d("HomeFragment", "setObserver: ${it.size}")
+//            Log.d("HomeFragment", "setObserver: ${it.last().name}")
+            lastOffset = it[0].count / limit * limit
+            pokemonsAdapter.addAll(it.subList(it.size - limit, it.size))
+            pokemonsAdapter.removeLoadingFooter()
+            isLoading = false
+
+            if (currentOffset != lastOffset) pokemonsAdapter.addLoadingFooter()
+            else isLastOffset = true
         })
     }
 

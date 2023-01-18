@@ -47,6 +47,7 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
                     name = pokemon.name
                     url = pokemon.url
                     image = Constants.API.URL_IMAGES_POKEMON.replace("{{id}}", pokemonId.toString())
+                    count = pageablePokemons.count
                 }
 
                 val pokemonExists = db.getById(pokemonId)
