@@ -12,4 +12,10 @@ class Constants {
         val CONSTRAINT = 2
         val NOT_FOUND = 3
     }
+
+    object TYPES {
+        val listTypes: List<String> = listOf("normal", "fighting", "flying", "poison", "ground",
+            "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice",
+            "dragon", "dark", "fairy")
+    }
 }

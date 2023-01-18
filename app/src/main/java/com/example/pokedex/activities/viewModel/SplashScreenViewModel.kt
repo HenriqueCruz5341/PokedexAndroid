@@ -73,30 +73,33 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         val dbTypesRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
         var msg = 0
 
+        val listTypeEntity: MutableList<TypeEntity> = mutableListOf()
+        Constants.TYPES.listTypes.forEachIndexed { index, s ->
+            listTypeEntity.add(TypeEntity().apply {
+                id = index
+                name = s
+            })
+        }
+
         if(dbTypes.getAll().isEmpty()) {
-            try {
-                val type1 = TypeEntity().apply {
-                    id = 1
-                    name = "fire"
-                }
-                val type2 = TypeEntity().apply {
-                    id = 2
-                    name = "water"
-                }
+            print("a lista é essa ")
+            listTypeEntity.forEach{
+                try {
+                    print("${it.name} ")
+                    dbTypes.insert(it)
 
-                dbTypes.insert(type1)
-                dbTypes.insert(type2)
-
-            } catch (e: SQLiteConstraintException){
-                msg = Constants.BD_MSGS.CONSTRAINT
-            } catch (e: Exception) {
-                msg = Constants.BD_MSGS.FAIL
-            } finally {
-                if(msg != 0) {
-                    println("Erro ao inserir no banco, code: $msg")
-                    msg = 0
+                } catch (e: SQLiteConstraintException){
+                    msg = Constants.BD_MSGS.CONSTRAINT
+                } catch (e: Exception) {
+                    msg = Constants.BD_MSGS.FAIL
+                } finally {
+                    if(msg != 0) {
+                        println("Erro ao inserir no banco, code: $msg")
+                        msg = 0
+                    }
                 }
             }
+            println("")
         }
 
         if(dbTypesRelation.getAll().isEmpty()) {
