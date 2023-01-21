@@ -9,7 +9,9 @@
     <string name="pokemon_image">PokemonImage</string>
     <string name="pokemon_name">PokemonName</string>
     <string name="type_name">TypeName</string>
-    <string name="text_weakness">Weakness</string>
+    <string name="text_defense">Defender</string>
+    <string name="text_attack">Attacker</string>
+    <string name="multiplier">2x</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

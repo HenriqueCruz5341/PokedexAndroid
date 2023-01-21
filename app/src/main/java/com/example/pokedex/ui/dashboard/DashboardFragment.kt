@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.pokedex.databinding.FragmentDashboardBinding
 import com.example.pokedex.repository.database.model.TypeEntity
+import com.example.pokedex.ui.recycleView.typeRelations.ListTypeRelationAdapter
 import com.example.pokedex.ui.recycleView.types.ListTypesAdapter
 import com.example.pokedex.ui.recycleView.types.OnTypeListener
 
@@ -19,6 +20,8 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private lateinit var dashboardViewModel: DashboardViewModel
     private val typeAdapter = ListTypesAdapter()
+    private val typeDefenseAdapter = ListTypeRelationAdapter()
+    private val typeAttackAdapter = ListTypeRelationAdapter()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -37,6 +40,12 @@ class DashboardFragment : Fragment() {
         binding.recyclerListTypes.layoutManager = GridLayoutManager(context, 3)
         binding.recyclerListTypes.adapter = typeAdapter
 
+        binding.recyclerListDefense.layoutManager = GridLayoutManager(context, 3)
+        binding.recyclerListDefense.adapter = typeDefenseAdapter
+
+        binding.recyclerListAttack.layoutManager = GridLayoutManager(context, 3)
+        binding.recyclerListAttack.adapter = typeAttackAdapter
+
         val listener = object : OnTypeListener {
             override fun onClick(type: TypeEntity) {
                 Toast.makeText(context, type.name, Toast.LENGTH_SHORT).show()
@@ -45,6 +54,8 @@ class DashboardFragment : Fragment() {
         typeAdapter.setListener(listener)
 
         dashboardViewModel.getAllTypes()
+        dashboardViewModel.getAllEffectiveness()
+        dashboardViewModel.getAllWeakness()
 
         setObserver()
 
@@ -54,6 +65,14 @@ class DashboardFragment : Fragment() {
     private fun setObserver() {
         dashboardViewModel.getTypeList().observe(viewLifecycleOwner, Observer {
             typeAdapter.updateTypeList(it)
+        })
+
+        dashboardViewModel.getTypeEffectiveness().observe(viewLifecycleOwner, Observer {
+            typeAttackAdapter.updateTypeList(it)
+        })
+
+        dashboardViewModel.getTypeWeakness().observe(viewLifecycleOwner, Observer {
+            typeDefenseAdapter.updateTypeList(it)
         })
     }
 

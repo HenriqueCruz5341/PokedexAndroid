@@ -6,10 +6,10 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName="TypeRelations", indices = [Index(value = ["atack_id", "defense_id"], unique = true)], primaryKeys = ["atack_id", "defense_id"])
+@Entity(tableName="TypeRelations", indices = [Index(value = ["attack_id", "defense_id"], unique = true)], primaryKeys = ["attack_id", "defense_id"])
 class TypeRelationEntity {
-    @ColumnInfo(name="atack_id")
-    var atack_id: Int = 0
+    @ColumnInfo(name="attack_id")
+    var attack_id: Int = 0
 
     @ColumnInfo(name="defense_id")
     var defense_id: Int = 0
