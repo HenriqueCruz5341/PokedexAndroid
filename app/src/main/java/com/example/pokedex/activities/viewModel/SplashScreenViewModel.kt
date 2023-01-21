@@ -70,6 +70,7 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         }
     }
 
+    // TODO refactor
     fun saveTypes() {
         val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
         val dbTypesRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
@@ -78,7 +79,7 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         val listTypeEntity: MutableList<TypeEntity> = mutableListOf()
         Constants.TYPES.listTypes.forEachIndexed { index, s ->
             listTypeEntity.add(TypeEntity().apply {
-                id = index
+                id = index+1
                 name = s
             })
         }
@@ -105,23 +106,69 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         }
 
         if(dbTypesRelation.getAll().isEmpty()) {
-            try {
-                val typeRelation = TypeRelationEntity().apply {
-                    atack_id = 1
-                    defense_id = 2
-                    multiplaier = 0.5f
-                }
+            for (i in 0 until Constants.TYPES.typeJsonArray.length()) {
+                try {
+                    val typeJson = Constants.TYPES.typeJsonArray.getJSONObject(i)
+                    val typeAtackName = typeJson.getString("name").lowercase()
+                    val immunesJson = typeJson.getJSONArray("immunes")
+                    val weaknessJson = typeJson.getJSONArray("weaknesses")
+                    val strengthJson = typeJson.getJSONArray("strengths")
+                    val atackPokemon = dbTypes.getByName(typeAtackName)
 
-                dbTypesRelation.insert(typeRelation)
+                    // immunes
+                    for(j in 0 until immunesJson.length()) {
+                        val typeDefenseName = immunesJson.getString(j).lowercase()
+                        val defensePokemon = dbTypes.getByName(typeDefenseName)
+                        if(atackPokemon != null && defensePokemon != null) {
+                            val typeRelation = TypeRelationEntity().apply {
+                                attack_id = atackPokemon.id
+                                defense_id = defensePokemon.id
+                                multiplaier = 0f
+                            }
+                            dbTypesRelation.insert(typeRelation)
 
-            } catch (e: SQLiteConstraintException){
-                msg = Constants.BD_MSGS.CONSTRAINT
-            } catch (e: Exception) {
-                msg = Constants.BD_MSGS.FAIL
-            } finally {
-                if(msg != 0) {
-                    println("Erro ao inserir no banco, code: $msg")
-                    msg = 0
+                        }
+                    }
+
+                    // weakness
+                    for(j in 0 until weaknessJson.length()) {
+                        val typeDefenseName = weaknessJson.getString(j).lowercase()
+                        val defensePokemon = dbTypes.getByName(typeDefenseName)
+                        if(atackPokemon != null && defensePokemon != null) {
+                            val typeRelation = TypeRelationEntity().apply {
+                                attack_id = atackPokemon.id
+                                defense_id = defensePokemon.id
+                                multiplaier = 0.5f
+                            }
+                            dbTypesRelation.insert(typeRelation)
+
+                        }
+                    }
+
+                    // strength
+                    for(j in 0 until strengthJson.length()) {
+                        val typeDefenseName = strengthJson.getString(j).lowercase()
+                        val defensePokemon = dbTypes.getByName(typeDefenseName)
+                        if(atackPokemon != null && defensePokemon != null) {
+                            val typeRelation = TypeRelationEntity().apply {
+                                attack_id = atackPokemon.id
+                                defense_id = defensePokemon.id
+                                multiplaier = 2f
+                            }
+                            dbTypesRelation.insert(typeRelation)
+
+                        }
+                    }
+
+                } catch (e: SQLiteConstraintException) {
+                    msg = Constants.BD_MSGS.CONSTRAINT
+                } catch (e: Exception) {
+                    msg = Constants.BD_MSGS.FAIL
+                } finally {
+                    if (msg != 0) {
+                        println("Erro ao inserir no banco, code: $msg")
+                        msg = 0
+                    }
                 }
             }
         }

@@ -23,4 +23,7 @@ interface TypeDAO {
 
     @Query("SELECT * FROM Types WHERE id = :id")
     fun getById(id: Int): TypeEntity?
+
+    @Query("SELECT * FROM Types WHERE name = :name")
+    fun getByName(name: String): TypeEntity?
 }

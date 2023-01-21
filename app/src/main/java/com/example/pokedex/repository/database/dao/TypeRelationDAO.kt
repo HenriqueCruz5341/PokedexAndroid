@@ -20,9 +20,15 @@ interface TypeRelationDAO {
     @Query("SELECT * FROM TypeRelations WHERE defense_id = :defense_id")
     fun getByDefenseId(defense_id: Int): List<TypeRelationEntity>
 
-    @Query("SELECT * FROM TypeRelations WHERE atack_id = :atack_id")
-    fun getByAtackId(atack_id: Int): List<TypeRelationEntity>
+    @Query("SELECT * FROM TypeRelations WHERE attack_id = :attack_id")
+    fun getByAttackId(attack_id: Int): List<TypeRelationEntity>
 
-    @Query("SELECT * FROM TypeRelations WHERE atack_id = :atack_id AND defense_id = :defense_id")
-    fun getByAtackAndDefenseId(atack_id: Int, defense_id: Int): TypeRelationEntity?
+    @Query("SELECT * FROM TypeRelations WHERE attack_id = :attack_id AND defense_id = :defense_id")
+    fun getByAtackAndDefenseId(attack_id: Int, defense_id: Int): TypeRelationEntity?
+
+    @Query("SELECT * FROM TypeRelations WHERE attack_id = :id")
+    fun getAttack(id: Int): List<TypeRelationEntity>
+
+    @Query("SELECT * FROM TypeRelations WHERE defense_id = :id")
+    fun getDefense(id: Int): List<TypeRelationEntity>
 }
