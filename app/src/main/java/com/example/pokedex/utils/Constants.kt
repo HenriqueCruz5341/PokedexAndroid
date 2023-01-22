@@ -18,4 +18,10 @@ class Constants {
             "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice",
             "dragon", "dark", "fairy")
     }
+
+    object GENDERS {
+        val MALE = 0
+        val FEMALE = 1
+        val GENDERLESS = 2
+    }
 }

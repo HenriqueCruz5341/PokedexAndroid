@@ -1,9 +1,8 @@
 package com.example.pokedex.repository.api.model
 
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
-class PageableDto : Serializable {
+class PageableDto {
     @SerializedName("count")
     var count: Int = 0
 

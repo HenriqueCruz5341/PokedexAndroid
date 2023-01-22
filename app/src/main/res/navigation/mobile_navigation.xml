@@ -9,7 +9,13 @@
         android:id="@+id/navigation_home"
         android:name="com.example.pokedex.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_pokemonFragment"
+            app:destination="@id/pokemonFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slide_down"/>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -22,4 +28,18 @@
         android:name="com.example.pokedex.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/pokemonFragment"
+        android:name="com.example.pokedex.ui.pokemon.PokemonFragment"
+        android:label="fragment_pokemon"
+        tools:layout="@layout/fragment_pokemon" >
+        <action
+            android:id="@+id/action_pokemonFragment_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:enterAnim="@anim/slide_down"
+            app:exitAnim="@anim/slide_up"/>
+        <argument
+            android:name="pokemon_id"
+            app:argType="integer" />
+    </fragment>
 </navigation>

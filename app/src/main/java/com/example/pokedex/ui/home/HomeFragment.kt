@@ -11,8 +11,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentHomeBinding
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.ui.recycleView.pokemon.ListPokemonAdapter
@@ -23,8 +26,8 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var homeViewModel: HomeViewModel
-    private val pokemonsAdapter = ListPokemonAdapter()
     private val binding get() = _binding!!
+    private val pokemonsAdapter = ListPokemonAdapter()
     private val offsetStart: Int = 0
     private var isLoading: Boolean = false
     private var isLastOffset: Boolean = false
@@ -55,7 +58,8 @@ class HomeFragment : Fragment() {
 
         val listener = object : OnPokemonListener {
             override fun onClick(pokemon: PokemonPageableEntity) {
-                Toast.makeText(context, pokemon.name, Toast.LENGTH_SHORT).show()
+                val action = HomeFragmentDirections.actionNavigationHomeToPokemonFragment(pokemon.id)
+                findNavController().navigate(action)
             }
         }
         pokemonsAdapter.setListener(listener)

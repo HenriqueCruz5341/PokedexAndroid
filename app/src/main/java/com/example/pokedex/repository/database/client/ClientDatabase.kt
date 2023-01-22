@@ -4,17 +4,21 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.pokedex.repository.database.dao.PokemonDAO
 import com.example.pokedex.repository.database.dao.PokemonPageableDAO
 import com.example.pokedex.repository.database.dao.TypeDAO
 import com.example.pokedex.repository.database.dao.TypeRelationDAO
+import com.example.pokedex.repository.database.model.PokemonEntity
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.repository.database.model.TypeEntity
 import com.example.pokedex.repository.database.model.TypeRelationEntity
 
-@Database(entities = [PokemonPageableEntity::class, TypeEntity::class, TypeRelationEntity::class], version = 2)
+@Database(entities = [PokemonPageableEntity::class, TypeEntity::class, TypeRelationEntity::class, PokemonEntity::class], version = 3)
 abstract class ClientDatabase : RoomDatabase() {
 
     abstract fun PokemonPageableDAO(): PokemonPageableDAO
+
+    abstract fun PokemonDAO(): PokemonDAO
 
     abstract fun TypeDAO(): TypeDAO
 
