@@ -18,7 +18,7 @@
         />
 
     <TextView
-        android:id="@+id/text_weakness"
+        android:id="@+id/text_defense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/recycler_list_types"
@@ -29,7 +29,7 @@
         android:id="@+id/recycler_list_defense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/text_weakness"
+        app:layout_constraintTop_toBottomOf="@id/text_defense"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="30dp"
         android:layout_marginStart="20dp"
@@ -37,7 +37,7 @@
         />
 
     <TextView
-        android:id="@+id/text_effectiveness"
+        android:id="@+id/text_attack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/recycler_list_defense"
@@ -48,7 +48,7 @@
         android:id="@+id/recycler_list_attack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/text_effectiveness"
+        app:layout_constraintTop_toBottomOf="@id/text_attack"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="30dp"
         android:layout_marginStart="20dp"

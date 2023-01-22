@@ -22,6 +22,7 @@ class DashboardFragment : Fragment() {
     private val typeAdapter = ListTypesAdapter()
     private val typeDefenseAdapter = ListTypeRelationAdapter()
     private val typeAttackAdapter = ListTypeRelationAdapter()
+    private var selectedType: TypeEntity? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -48,14 +49,15 @@ class DashboardFragment : Fragment() {
 
         val listener = object : OnTypeListener {
             override fun onClick(type: TypeEntity) {
-                Toast.makeText(context, type.name, Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, type.name, Toast.LENGTH_SHORT).show()
+                selectedType = type
+                dashboardViewModel.getAllEffectiveness(type.id)
+                dashboardViewModel.getAllWeakness(type.id)
             }
         }
         typeAdapter.setListener(listener)
 
         dashboardViewModel.getAllTypes()
-        dashboardViewModel.getAllEffectiveness()
-        dashboardViewModel.getAllWeakness()
 
         setObserver()
 

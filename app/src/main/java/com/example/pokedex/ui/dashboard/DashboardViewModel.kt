@@ -13,7 +13,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private var listMsg = MutableLiveData<Int>()
     private var typeList = MutableLiveData<List<TypeEntity>>()
     private var typeDefenseList = MutableLiveData<List<TypeMultiplierDTO>>()
-    private var typeAtackList = MutableLiveData<List<TypeMultiplierDTO>>()
+    private var typeAttackList = MutableLiveData<List<TypeMultiplierDTO>>()
 
     fun getListMsg(): LiveData<Int> {
         return listMsg
@@ -24,7 +24,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getTypeEffectiveness(): LiveData<List<TypeMultiplierDTO>> {
-        return typeAtackList
+        return typeAttackList
     }
 
     fun getTypeWeakness(): LiveData<List<TypeMultiplierDTO>> {
@@ -46,11 +46,11 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun getAllEffectiveness() {
+    fun getAllEffectiveness(typeId: Int) {
         val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
         val dbRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
         try {
-            val attack = dbRelation.getAttack(1)
+            val attack = dbRelation.getAttack(typeId)
             val resp: MutableList<TypeMultiplierDTO> = mutableListOf()
             if (attack.isEmpty()) {
                 listMsg.value = Constants.BD_MSGS.NOT_FOUND
@@ -61,18 +61,18 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                     if (type != null)
                         resp.add(TypeMultiplierDTO(type.name, it.multiplaier))
                 }
-                typeAtackList.value = resp
+                typeAttackList.value = resp.toList()
             }
         } catch (e: Exception) {
             listMsg.value = Constants.BD_MSGS.FAIL
         }
     }
 
-    fun getAllWeakness() {
+    fun getAllWeakness(typeId: Int) {
         val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
         val dbRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
         try {
-            val defense = dbRelation.getDefense(1)
+            val defense = dbRelation.getDefense(typeId)
             val resp: MutableList<TypeMultiplierDTO> = mutableListOf()
             if (defense.isEmpty()) {
                 listMsg.value = Constants.BD_MSGS.NOT_FOUND
@@ -83,7 +83,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                     if (type != null)
                         resp.add(TypeMultiplierDTO(type.name, it.multiplaier))
                 }
-                typeDefenseList.value = resp
+                typeDefenseList.value = resp.toList()
             }
         } catch (e: Exception) {
             listMsg.value = Constants.BD_MSGS.FAIL

@@ -27,6 +27,6 @@ class ListTypeRelationAdapter : RecyclerView.Adapter<ListTypeRelationViewHolder>
 
     fun updateTypeList(list: List<TypeMultiplierDTO>) {
         typeMultiplierList = list
-        notifyItemRangeChanged(0, list.size)
+        notifyDataSetChanged()
     }
 }
