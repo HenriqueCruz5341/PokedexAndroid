@@ -11,6 +11,7 @@
     <string name="type_name" translatable="false">TypeName</string>
     <string name="shine_image" translatable="false">Shine</string>
     <string name="back_image" translatable="false">Back</string>
+    <string name="next_image" translatable="false">Next</string>
     <string name="male_image" translatable="false">Male</string>
     <string name="female_image" translatable="false">Female</string>
     <string name="pokemon_variant" translatable="false">PokemonVariant</string>

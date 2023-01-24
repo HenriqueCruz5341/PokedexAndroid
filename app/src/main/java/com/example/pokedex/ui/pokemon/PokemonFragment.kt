@@ -6,21 +6,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPokemonBinding
+import com.example.pokedex.repository.database.model.EvolutionEntity
 import com.example.pokedex.repository.database.model.PokemonEntity
+import com.example.pokedex.ui.recycleView.evolution.ListEvolutionAdapter
+import com.example.pokedex.ui.recycleView.evolution.OnEvolutionListener
 import com.example.pokedex.utils.Constants
 import com.example.pokedex.utils.Resources
+
 
 class PokemonFragment : Fragment() {
 
     private var _binding: FragmentPokemonBinding? = null
     private lateinit var pokemonViewModel: PokemonViewModel
     private val args: PokemonFragmentArgs by navArgs()
+    private val evolutionAdapter = ListEvolutionAdapter()
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -33,6 +40,8 @@ class PokemonFragment : Fragment() {
         _binding = FragmentPokemonBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        initRecyclerListEvolutions()
+
         configureListeners()
 
         setObserver()
@@ -40,6 +49,30 @@ class PokemonFragment : Fragment() {
         pokemonViewModel.loadPokemon(args.pokemonId)
 
         return root
+    }
+
+    private fun initRecyclerListEvolutions() {
+        binding.recyclerListEvolutions.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerListEvolutions.adapter = evolutionAdapter
+
+        val listener = object : OnEvolutionListener {
+            override fun onClick(evolution: EvolutionEntity) {
+                if (evolution.id == args.pokemonId)
+                    return
+
+                val navBuilder = NavOptions.Builder()
+                if (evolution.id > args.pokemonId)
+                    navBuilder.setEnterAnim(R.anim.slide_in_left).setExitAnim(R.anim.slide_out_left)
+                        .setPopEnterAnim(R.anim.slide_in_right).setPopExitAnim(R.anim.slide_out_right)
+                else
+                    navBuilder.setEnterAnim(R.anim.slide_in_right).setExitAnim(R.anim.slide_out_right)
+                        .setPopEnterAnim(R.anim.slide_in_left).setPopExitAnim(R.anim.slide_out_left)
+
+                val action = PokemonFragmentDirections.actionPokemonFragmentSelf(evolution.id)
+                findNavController().navigate(action, navBuilder.build())
+            }
+        }
+        evolutionAdapter.setListener(listener)
     }
 
     private fun configureListeners() {
@@ -51,6 +84,9 @@ class PokemonFragment : Fragment() {
         }
         binding.femaleButton.setOnClickListener{
             pokemonViewModel.setGenderButtons(Constants.GENDERS.FEMALE)
+        }
+        binding.backImage.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
@@ -70,6 +106,9 @@ class PokemonFragment : Fragment() {
         pokemonViewModel.getGenderButtons.observe(viewLifecycleOwner) {
             configurePokemonImage(pokemonViewModel.getShinyButton.value!!, it)
             configureGenderButtons(it)
+        }
+        pokemonViewModel.getCustomEvolutionList.observe(viewLifecycleOwner) {
+            evolutionAdapter.updateEvolutionList(it)
         }
     }
 
@@ -109,9 +148,9 @@ class PokemonFragment : Fragment() {
 
     private fun configureShinyImage(shineButtonState: Boolean){
         if (shineButtonState) {
-            binding.shinyButton.background = ResourcesCompat.getDrawable(resources, R.drawable.ic_shiny_checked, null)
+            binding.shinyButton.setImageResource(R.drawable.ic_shiny_checked)
         }else{
-            binding.shinyButton.background = ResourcesCompat.getDrawable(resources, R.drawable.ic_shiny, null)
+            binding.shinyButton.setImageResource(R.drawable.ic_shiny)
         }
     }
 

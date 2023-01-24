@@ -373,6 +373,15 @@
                 android:progress="25" />
         </LinearLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_list_evolutions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/speed_line"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

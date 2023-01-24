@@ -14,7 +14,9 @@
             android:id="@+id/action_navigation_home_to_pokemonFragment"
             app:destination="@id/pokemonFragment"
             app:enterAnim="@anim/slide_up"
-            app:exitAnim="@anim/slide_down"/>
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@anim/slide_down" />
     </fragment>
 
     <fragment
@@ -36,10 +38,17 @@
         <action
             android:id="@+id/action_pokemonFragment_to_navigation_home"
             app:destination="@id/navigation_home"
-            app:enterAnim="@anim/slide_down"
-            app:exitAnim="@anim/slide_up"/>
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@anim/slide_down"
+            app:popEnterAnim="@anim/slide_up"
+            app:popExitAnim="@android:anim/fade_out" />
         <argument
             android:name="pokemon_id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_pokemonFragment_self"
+            app:destination="@id/pokemonFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right" />
     </fragment>
 </navigation>

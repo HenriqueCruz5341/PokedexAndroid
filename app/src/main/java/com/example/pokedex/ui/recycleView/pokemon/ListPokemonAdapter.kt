@@ -31,10 +31,10 @@ class ListPokemonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val pokemon = pokemonList[position]
 
-        if(getItemViewType(position) == item){
-            println("É ITEM: $position")
-        }else
-            println("É LOADING: $position")
+//        if(getItemViewType(position) == item){
+//            println("É ITEM: $position")
+//        }else
+//            println("É LOADING: $position")
 
         if(getItemViewType(position) == item) {
             val pokemonVH: ListPokemonViewHolder = holder as ListPokemonViewHolder
@@ -44,7 +44,6 @@ class ListPokemonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             val loadingVH: LoadingViewHolder = holder as LoadingViewHolder
             loadingVH.getBinding().container.visibility = View.VISIBLE
         }
-
     }
 
     override fun getItemCount(): Int {
