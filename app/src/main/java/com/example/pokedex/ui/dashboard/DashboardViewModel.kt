@@ -14,6 +14,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private var typeList = MutableLiveData<List<TypeEntity>>()
     private var typeDefenseList = MutableLiveData<List<TypeMultiplierDTO>>()
     private var typeAttackList = MutableLiveData<List<TypeMultiplierDTO>>()
+    private var selectedFirstType: TypeEntity? = null
+    private var selectedSecondType: TypeEntity? = null
 
     fun getListMsg(): LiveData<Int> {
         return listMsg
@@ -46,11 +48,25 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun getAllEffectiveness(typeId: Int) {
+    fun userSelectType(type: TypeEntity) {
+        if(type == selectedFirstType){
+            selectedFirstType = null
+            typeAttackList.value = listOf()
+            typeDefenseList.value = listOf()
+            return
+        }
+        selectedFirstType = type
+        if (selectedFirstType != null) {
+            getAllEffectiveness()
+            getAllWeakness()
+        }
+    }
+
+    fun getAllEffectiveness() {
         val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
         val dbRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
         try {
-            val attack = dbRelation.getAttack(typeId)
+            val attack = dbRelation.getAttack(selectedFirstType!!.id)
             val resp: MutableList<TypeMultiplierDTO> = mutableListOf()
             if (attack.isEmpty()) {
                 listMsg.value = Constants.BD_MSGS.NOT_FOUND
@@ -68,11 +84,11 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun getAllWeakness(typeId: Int) {
+    fun getAllWeakness() {
         val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
         val dbRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
         try {
-            val defense = dbRelation.getDefense(typeId)
+            val defense = dbRelation.getDefense(selectedFirstType!!.id)
             val resp: MutableList<TypeMultiplierDTO> = mutableListOf()
             if (defense.isEmpty()) {
                 listMsg.value = Constants.BD_MSGS.NOT_FOUND

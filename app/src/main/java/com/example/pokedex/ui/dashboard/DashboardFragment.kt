@@ -49,10 +49,7 @@ class DashboardFragment : Fragment() {
 
         val listener = object : OnTypeListener {
             override fun onClick(type: TypeEntity) {
-                //Toast.makeText(context, type.name, Toast.LENGTH_SHORT).show()
-                selectedType = type
-                dashboardViewModel.getAllEffectiveness(type.id)
-                dashboardViewModel.getAllWeakness(type.id)
+                dashboardViewModel.userSelectType(type)
             }
         }
         typeAdapter.setListener(listener)
