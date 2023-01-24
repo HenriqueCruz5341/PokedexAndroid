@@ -232,6 +232,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     private fun loadCustomEvolutionList(evolutions: MutableList<EvolutionEntity>) {
         val list = mutableListOf<EvolutionEntity>()
         var prevOrder = 0
+        evolutions.sortBy { it.order }
         evolutions.forEach {
             if(it.order == prevOrder) {
                 list.add(it)
