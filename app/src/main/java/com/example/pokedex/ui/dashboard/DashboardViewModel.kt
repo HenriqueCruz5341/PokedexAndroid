@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.pokedex.repository.database.client.ClientDatabase
 import com.example.pokedex.repository.database.dto.TypeMultiplierDTO
 import com.example.pokedex.repository.database.model.TypeEntity
+import com.example.pokedex.repository.database.model.TypeRelationEntity
 import com.example.pokedex.utils.Constants
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
@@ -14,8 +15,10 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private var typeList = MutableLiveData<List<TypeEntity>>()
     private var typeDefenseList = MutableLiveData<List<TypeMultiplierDTO>>()
     private var typeAttackList = MutableLiveData<List<TypeMultiplierDTO>>()
-    private var selectedFirstType: TypeEntity? = null
-    private var selectedSecondType: TypeEntity? = null
+    private var selectedTypes: MutableList<TypeEntity> = mutableListOf()
+
+    private val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
+    private val dbRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
 
     fun getListMsg(): LiveData<Int> {
         return listMsg
@@ -49,60 +52,63 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun userSelectType(type: TypeEntity) {
-        if(type == selectedFirstType){
-            selectedFirstType = null
-            typeAttackList.value = listOf()
-            typeDefenseList.value = listOf()
-            return
+        if (selectedTypes.isNotEmpty()) {
+            if (type in selectedTypes) {
+                selectedTypes.remove(type)
+                getAllEffectiveness()
+                getAllWeakness()
+                return
+            }
+            if (selectedTypes.size >= 2) return
         }
-        selectedFirstType = type
-        if (selectedFirstType != null) {
-            getAllEffectiveness()
-            getAllWeakness()
-        }
+        selectedTypes.add(type)
+        getAllEffectiveness()
+        getAllWeakness()
     }
 
-    fun getAllEffectiveness() {
-        val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
-        val dbRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
+    private fun getAll(listToChange: MutableLiveData<List<TypeMultiplierDTO>>, typeFunctionFirst: (selectId: Int)->List<TypeRelationEntity>, typeFunctionSecond: (typeRelation: TypeRelationEntity) -> TypeEntity?) {
+        if(selectedTypes.isEmpty()) {
+            listToChange.value = listOf()
+            return
+        }
         try {
-            val attack = dbRelation.getAttack(selectedFirstType!!.id)
-            val resp: MutableList<TypeMultiplierDTO> = mutableListOf()
+            val attack = typeFunctionFirst.invoke(selectedTypes[0].id)
+            var attackSecondType: List<TypeRelationEntity>? = null
+            if (selectedTypes.size == 2) attackSecondType = typeFunctionFirst.invoke(selectedTypes[1].id)
+            var resp: MutableList<TypeMultiplierDTO> = mutableListOf()
             if (attack.isEmpty()) {
                 listMsg.value = Constants.BD_MSGS.NOT_FOUND
             } else {
                 listMsg.value = Constants.BD_MSGS.SUCCESS
                 attack.forEach {
-                    val type = dbTypes.getById(it.defense_id)
+                    val type = typeFunctionSecond.invoke(it)
                     if (type != null)
                         resp.add(TypeMultiplierDTO(type.name, it.multiplaier))
                 }
-                typeAttackList.value = resp.toList()
+                if (attackSecondType != null) {
+                    attackSecondType.forEach {
+                        val type = typeFunctionSecond.invoke(it)
+                        if (type != null) {
+                            val aux = resp.find { it.name == type.name }
+                            if (aux != null)
+                                aux.multiplier *= it.multiplaier
+                            else
+                                resp.add(TypeMultiplierDTO(type.name, it.multiplaier))
+                        }
+                    }
+                }
+                listToChange.value = resp.toList()
             }
         } catch (e: Exception) {
             listMsg.value = Constants.BD_MSGS.FAIL
         }
     }
 
-    fun getAllWeakness() {
-        val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
-        val dbRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
-        try {
-            val defense = dbRelation.getDefense(selectedFirstType!!.id)
-            val resp: MutableList<TypeMultiplierDTO> = mutableListOf()
-            if (defense.isEmpty()) {
-                listMsg.value = Constants.BD_MSGS.NOT_FOUND
-            } else {
-                listMsg.value = Constants.BD_MSGS.SUCCESS
-                defense.forEach {
-                    val type = dbTypes.getById(it.attack_id)
-                    if (type != null)
-                        resp.add(TypeMultiplierDTO(type.name, it.multiplaier))
-                }
-                typeDefenseList.value = resp.toList()
-            }
-        } catch (e: Exception) {
-            listMsg.value = Constants.BD_MSGS.FAIL
-        }
+    private fun getAllEffectiveness() {
+        getAll(typeAttackList, { dbRelation.getAttack(it) }, { dbTypes.getById(it.defense_id) })
+    }
+
+    private fun getAllWeakness() {
+        getAll(typeDefenseList, { dbRelation.getDefense(it) }, { dbTypes.getById(it.attack_id) })
     }
 }
