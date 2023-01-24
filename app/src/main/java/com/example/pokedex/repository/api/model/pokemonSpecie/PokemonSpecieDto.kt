@@ -12,6 +12,9 @@ class PokemonSpecieDto {
     @SerializedName("evolution_chain")
     var evolutionChain: EvolutionChainBasicDto = EvolutionChainBasicDto()
 
+    @SerializedName("gender_rate")
+    var genderRate: Int = 0
+
     @SerializedName("varieties")
     var varieties: List<VarietyDto> = listOf()
 }

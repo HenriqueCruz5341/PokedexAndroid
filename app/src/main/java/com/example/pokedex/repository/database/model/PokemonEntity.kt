@@ -56,4 +56,6 @@ class PokemonEntity {
     @ColumnInfo(name = "stat_speed")
     var statSpeed: Int = 0
 
+    @ColumnInfo(name = "gender_rate")
+    var genderRate: Int = 0
 }

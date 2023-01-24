@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavOptions
@@ -79,14 +77,14 @@ class PokemonFragment : Fragment() {
         binding.shinyButton.setOnClickListener {
             pokemonViewModel.setShinyButtonToggle()
         }
-        binding.maleButton.setOnClickListener{
-            pokemonViewModel.setGenderButtons(Constants.GENDERS.MALE)
-        }
-        binding.femaleButton.setOnClickListener{
+        binding.femaleButton.setOnClickListener {
             pokemonViewModel.setGenderButtons(Constants.GENDERS.FEMALE)
         }
         binding.backImage.setOnClickListener {
             findNavController().navigateUp()
+        }
+        binding.maleButton.setOnClickListener {
+            pokemonViewModel.setGenderButtons(Constants.GENDERS.MALE)
         }
     }
 
@@ -95,6 +93,7 @@ class PokemonFragment : Fragment() {
         pokemonViewModel.getPokemon.observe(viewLifecycleOwner) {
             configurePokemonTypes(it)
             configurePokemonStats(it)
+            configurePokemonGender(it)
         }
         pokemonViewModel.getImgDefault.observe(viewLifecycleOwner) {
             binding.pokemonImage.setImageBitmap(it)
@@ -110,6 +109,18 @@ class PokemonFragment : Fragment() {
         pokemonViewModel.getCustomEvolutionList.observe(viewLifecycleOwner) {
             evolutionAdapter.updateEvolutionList(it)
         }
+        pokemonViewModel.getImgDefault.observe(viewLifecycleOwner) {
+            configurePokemonImage(pokemonViewModel.getShinyButton.value!!, pokemonViewModel.getGenderButtons.value!!)
+        }
+        pokemonViewModel.getImgShiny.observe(viewLifecycleOwner) {
+            configurePokemonImage(pokemonViewModel.getShinyButton.value!!, pokemonViewModel.getGenderButtons.value!!)
+        }
+        pokemonViewModel.getImgFemale.observe(viewLifecycleOwner) {
+            configurePokemonImage(pokemonViewModel.getShinyButton.value!!, pokemonViewModel.getGenderButtons.value!!)
+        }
+        pokemonViewModel.getImgShinyFemale.observe(viewLifecycleOwner) {
+            configurePokemonImage(pokemonViewModel.getShinyButton.value!!, pokemonViewModel.getGenderButtons.value!!)
+        }
     }
 
     private fun configurePokemonTypes(pokemonEntity: PokemonEntity){
@@ -120,13 +131,7 @@ class PokemonFragment : Fragment() {
             binding.pokemonType2.text = resources.getString(Resources.getStringByName(pokemonEntity.typeTwo!!))
             binding.pokemonType2.setBackgroundColor(resources.getColor(Resources.getColorByName(pokemonEntity.typeTwo!!), null))
         }else{
-            binding.pokemonType1.layoutParams =
-                LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                    marginEnd = 0
-                }
-            binding.pokemonType2.text = ""
-            binding.pokemonType2.width = 0
-            binding.pokemonType2.height = 0
+            binding.pokemonType2.visibility = View.GONE
         }
     }
 
@@ -144,6 +149,23 @@ class PokemonFragment : Fragment() {
         binding.speedValue.text = pokemonEntity.statSpeed.toString()
         binding.speedBar.progress = pokemonEntity.statSpeed * 100 / 255
 
+    }
+
+    private fun configurePokemonGender(pokemonEntity: PokemonEntity) {
+        when (pokemonEntity.genderRate) {
+            -1 -> {
+                binding.genderLine.visibility = View.GONE
+                pokemonViewModel.setGenderButtons(Constants.GENDERS.GENDERLESS)
+            }
+            0 -> {
+                binding.femaleButton.visibility = View.GONE
+                pokemonViewModel.setGenderButtons(Constants.GENDERS.MALE)
+            }
+            8 -> {
+                binding.maleButton.visibility = View.GONE
+                pokemonViewModel.setGenderButtons(Constants.GENDERS.FEMALE)
+            }
+        }
     }
 
     private fun configureShinyImage(shineButtonState: Boolean){
@@ -184,8 +206,9 @@ class PokemonFragment : Fragment() {
             binding.pokemonImage.setImageBitmap(pokemonViewModel.getImgShinyFemale.value)
         else if (!shineButtonState && genderButtonsState != Constants.GENDERS.FEMALE)
             binding.pokemonImage.setImageBitmap(pokemonViewModel.getImgDefault.value)
-        else
+        else {
             binding.pokemonImage.setImageBitmap(pokemonViewModel.getImgFemale.value)
+        }
     }
 
     override fun onDestroyView() {

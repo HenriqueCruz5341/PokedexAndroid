@@ -117,7 +117,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun setGenderButtons(gender: Int) {
-        // gender_rate, se = -1, não tem gênero, se = 0, 100% macho, se = 8, 100% fêmea
+        // gender_rate, = -1 genderless, = 0 100% male,  = 8 100% female
         when (gender){
             Constants.GENDERS.MALE -> genderButtons.value = gender
             Constants.GENDERS.FEMALE -> genderButtons.value = gender
@@ -130,7 +130,6 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
         var msg = 0
 
         try {
-
             val pokemonEntity = PokemonEntity().apply {
                 id = pokemonDto.id
                 name = pokemonDto.name
@@ -147,6 +146,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                 statSpAttack = pokemonDto.stats[3].baseStat
                 statSpDefense = pokemonDto.stats[4].baseStat
                 statSpeed = pokemonDto.stats[5].baseStat
+                genderRate = pokemonSpecieDto.genderRate
             }
 
             val pokemonExists = db.getById(pokemonEntity.id)
@@ -275,25 +275,29 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun loadImages(pokemonEntity: PokemonEntity){
-        ImageURL.loadImageBitmap(pokemonEntity.imgDefault, object : ImageURL.OnImageLoaded {
-            override fun run(value: Bitmap) {
-                imgDefault.value = value
-            }
-        })
-        ImageURL.loadImageBitmap(pokemonEntity.imgFemale, object : ImageURL.OnImageLoaded {
-            override fun run(value: Bitmap) {
-                imgFemale.value = value
-            }
-        })
-        ImageURL.loadImageBitmap(pokemonEntity.imgShiny, object : ImageURL.OnImageLoaded {
-            override fun run(value: Bitmap) {
-                imgShiny.value = value
-            }
-        })
-        ImageURL.loadImageBitmap(pokemonEntity.imgShinyFemale, object : ImageURL.OnImageLoaded {
-            override fun run(value: Bitmap) {
-                imgShinyFemale.value = value
-            }
-        })
+        if (pokemonEntity.genderRate != 8) {
+            ImageURL.loadImageBitmap(pokemonEntity.imgDefault, object : ImageURL.OnImageLoaded {
+                override fun run(value: Bitmap) {
+                    imgDefault.value = value
+                }
+            })
+            ImageURL.loadImageBitmap(pokemonEntity.imgShiny, object : ImageURL.OnImageLoaded {
+                override fun run(value: Bitmap) {
+                    imgShiny.value = value
+                }
+            })
+        }
+        if (pokemonEntity.genderRate != 0 && pokemonEntity.genderRate != -1) {
+            ImageURL.loadImageBitmap(pokemonEntity.imgFemale, object : ImageURL.OnImageLoaded {
+                override fun run(value: Bitmap) {
+                    imgFemale.value = value
+                }
+            })
+            ImageURL.loadImageBitmap(pokemonEntity.imgShinyFemale, object : ImageURL.OnImageLoaded {
+                override fun run(value: Bitmap) {
+                    imgShinyFemale.value = value
+                }
+            })
+        }
     }
 }
