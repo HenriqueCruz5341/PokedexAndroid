@@ -1,31 +1,23 @@
 package com.example.pokedex.ui.recycleView.pokemon
 
-import android.graphics.BitmapFactory
-import android.os.Handler
-import android.os.Looper
+import android.graphics.Bitmap
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.PokemonLineBinding
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
-import java.net.URL
-import java.util.concurrent.Executors
+import com.example.pokedex.utils.ImageURL
 
 class ListPokemonViewHolder(private val binding: PokemonLineBinding, private val listener: OnPokemonListener) : RecyclerView.ViewHolder(binding.root) {
-    fun bindVH(pokemon: PokemonPageableEntity){
-        val executor = Executors.newSingleThreadExecutor()
-        val handler = Handler(Looper.getMainLooper())
-        executor.execute {
-            try {
-                val stream = URL(pokemon.image).openStream()
-                val image = BitmapFactory.decodeStream(stream)
 
-                handler.post {
-                    binding.pokemonImage.setImageBitmap(image)
-                }
+    fun getBinding(): PokemonLineBinding {
+        return binding
+    }
+
+    fun bindVH(pokemon: PokemonPageableEntity) {
+        ImageURL.loadImageBitmap(pokemon.image, object : ImageURL.OnImageLoaded {
+            override fun run(value: Bitmap) {
+                binding.pokemonImage.setImageBitmap(value)
             }
-            catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        })
         binding.pokemonName.text = pokemon.name
 
         binding.pokemonName.setOnClickListener {
@@ -35,5 +27,4 @@ class ListPokemonViewHolder(private val binding: PokemonLineBinding, private val
             listener.onClick(pokemon)
         }
     }
-
 }

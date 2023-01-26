@@ -19,4 +19,7 @@ class PokemonPageableEntity {
 
     @ColumnInfo(name="image")
     var image: String = ""
+
+    @ColumnInfo(name="count")
+    var count: Int = 0
 }

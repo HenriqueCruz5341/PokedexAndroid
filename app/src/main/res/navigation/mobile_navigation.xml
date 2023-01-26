@@ -9,7 +9,15 @@
         android:id="@+id/navigation_home"
         android:name="com.example.pokedex.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_pokemonFragment"
+            app:destination="@id/pokemonFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@anim/slide_down" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -22,4 +30,27 @@
         android:name="com.example.pokedex.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/pokemonFragment"
+        android:name="com.example.pokedex.ui.pokemon.PokemonFragment"
+        android:label="fragment_pokemon"
+        tools:layout="@layout/fragment_pokemon" >
+        <action
+            android:id="@+id/action_pokemonFragment_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@+id/mobile_navigation"
+            app:popUpToInclusive="true"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@anim/slide_down"
+            app:popEnterAnim="@anim/slide_up"
+            app:popExitAnim="@android:anim/fade_out" />
+        <argument
+            android:name="pokemon_id"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_pokemonFragment_self"
+            app:destination="@id/pokemonFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right" />
+    </fragment>
 </navigation>

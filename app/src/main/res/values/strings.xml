@@ -1,23 +1,62 @@
 <resources>
-    <string name="app_name">Pokedex</string>
-    <string name="title_lock_pokeball">Fechadura da pokebola</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="pokemon_image">PokemonImage</string>
-    <string name="pokemon_name">PokemonName</string>
-    <string name="type_name">TypeName</string>
+    <string name="app_name" translatable="false">Pokedex</string>
+    <string name="title_lock_pokeball" translatable="false">Lock pokeball</string>
+    <string name="title_home" translatable="false">Home</string>
+    <string name="title_dashboard" translatable="false">Dashboard</string>
+    <string name="title_notifications" translatable="false">Notifications</string>
+    <string name="title_activity_splash_screen" translatable="false">SplashScreenActivity</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="pokemon_image" translatable="false">PokemonImage</string>
+    <string name="pokemon_name" translatable="false">PokemonName</string>
+    <string name="type_name" translatable="false">TypeName</string>
+    <string name="shine_image" translatable="false">Shine</string>
+    <string name="back_image" translatable="false">Back</string>
+    <string name="next_image" translatable="false">Next</string>
+    <string name="male_image" translatable="false">Male</string>
+    <string name="female_image" translatable="false">Female</string>
+    <string name="pokemon_variant" translatable="false">PokemonVariant</string>
+    <string name="pokemon_description" translatable="false">PokemonDescription</string>
+    <string name="pokemon_type" translatable="false">PokemonType</string>
     <string name="text_defense">Defender</string>
     <string name="text_attack">Attacker</string>
-    <string name="multiplier">2x</string>
+    <string name="multiplier" translatable="false">2x</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="first_fragment_label" translatable="false">First Fragment</string>
+    <string name="second_fragment_label" translatable="false">Second Fragment</string>
+    <string name="next" translatable="false">Next</string>
+    <string name="previous" translatable="false">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="hello_first_fragment" translatable="false">Hello first fragment</string>
+    <string name="hello_second_fragment" translatable="false">Hello second fragment. Arg: %1$s</string>
+
+    <!-- Strings that user can visualize -->
+    <string name="text_weakness">Weakness</string>
+    <string name="search_pokemon_hint">Search by name</string>
+    <string name="hp_status">HP: </string>
+    <string name="atk_status">Attack: </string>
+    <string name="def_status">Defense: </string>
+    <string name="sp_atk_status">Sp. Atk: </string>
+    <string name="sp_def_status">Sp. Def: </string>
+    <string name="speed_status">Speed: </string>
+    <string name="value_status">000</string>
+    <!-- Strings used for pokemon types -->
+    <string name="normal">Normal</string>
+    <string name="fighting">Fighting</string>
+    <string name="flying">Flying</string>
+    <string name="poison">Poison</string>
+    <string name="ground">Ground</string>
+    <string name="rock">Rock</string>
+    <string name="bug">Bug</string>
+    <string name="ghost">Ghost</string>
+    <string name="steel">Steel</string>
+    <string name="fire">Fire</string>
+    <string name="water">Water</string>
+    <string name="grass">Grass</string>
+    <string name="electric">Electric</string>
+    <string name="psychic">Psychic</string>
+    <string name="ice">Ice</string>
+    <string name="dragon">Dragon</string>
+    <string name="dark">Dark</string>
+    <string name="fairy">Fairy</string>
+    <string name="unknown">Unknown</string>
 </resources>

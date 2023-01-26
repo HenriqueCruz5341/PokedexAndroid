@@ -41,4 +41,10 @@ class Constants {
 
         var typeJsonArray = JSONObject(typeChartJsonString).getJSONArray("types")
     }
+
+    object GENDERS {
+        val MALE = 0
+        val FEMALE = 1
+        val GENDERLESS = 2
+    }
 }
