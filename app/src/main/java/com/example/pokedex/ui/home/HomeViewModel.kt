@@ -2,18 +2,16 @@ package com.example.pokedex.ui.home
 
 import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableDto
 import com.example.pokedex.repository.api.service.PokeApiService
 import com.example.pokedex.repository.database.client.ClientDatabase
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.utils.Constants
-import com.example.pokedex.utils.MyCallback
+import com.example.pokedex.utils.Converter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -78,12 +76,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         var msg = 0
         for(pokemon in pageablePokemons.results) {
             try {
-                val pokemonId = pokemon.url.split("/")[6].toInt()
+                val pokemonId = Converter.idFromUrl(pokemon.url)
                 val pokemonPageable = PokemonPageableEntity().apply {
                     id = pokemonId
-                    name = pokemon.name
+                    name = Converter.beautifyName(pokemon.name)
                     url = pokemon.url
-                    image = Constants.API.URL_IMAGES_POKEMON.replace("{{id}}", pokemonId.toString())
+                    image = Converter.urlImageFromId(pokemonId)
                     count = pageablePokemons.count
                 }
 

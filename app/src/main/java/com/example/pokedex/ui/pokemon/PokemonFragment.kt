@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavOptions
@@ -14,6 +17,7 @@ import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPokemonBinding
 import com.example.pokedex.repository.database.model.EvolutionEntity
 import com.example.pokedex.repository.database.model.PokemonEntity
+import com.example.pokedex.repository.database.model.VarietyEntity
 import com.example.pokedex.ui.recycleView.evolution.ListEvolutionAdapter
 import com.example.pokedex.ui.recycleView.evolution.OnEvolutionListener
 import com.example.pokedex.utils.Constants
@@ -81,7 +85,7 @@ class PokemonFragment : Fragment() {
             pokemonViewModel.setGenderButtons(Constants.GENDERS.FEMALE)
         }
         binding.backImage.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_pokemonFragment_to_navigation_home)
         }
         binding.maleButton.setOnClickListener {
             pokemonViewModel.setGenderButtons(Constants.GENDERS.MALE)
@@ -109,6 +113,9 @@ class PokemonFragment : Fragment() {
         pokemonViewModel.getCustomEvolutionList.observe(viewLifecycleOwner) {
             evolutionAdapter.updateEvolutionList(it)
         }
+        pokemonViewModel.getVarietyList.observe(viewLifecycleOwner) {
+            configureVarietyDropdown(it)
+        }
         pokemonViewModel.getImgDefault.observe(viewLifecycleOwner) {
             configurePokemonImage(pokemonViewModel.getShinyButton.value!!, pokemonViewModel.getGenderButtons.value!!)
         }
@@ -120,6 +127,40 @@ class PokemonFragment : Fragment() {
         }
         pokemonViewModel.getImgShinyFemale.observe(viewLifecycleOwner) {
             configurePokemonImage(pokemonViewModel.getShinyButton.value!!, pokemonViewModel.getGenderButtons.value!!)
+        }
+    }
+
+    private fun configureVarietyDropdown(varietyList: List<VarietyEntity>) {
+        val dropdownVarieties = binding.dropdownVarieties
+        val pokemonNameList = mutableListOf(varietyList.find { it.id == args.pokemonId }?.pokemonName ?: "")
+        pokemonNameList.addAll(varietyList.map { it.pokemonName }.filter { it != pokemonNameList[0] })
+
+        val dropdownAdapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item, pokemonNameList
+            )
+
+        dropdownAdapter
+            .setDropDownViewResource(R.layout.spinner_item)
+        dropdownVarieties.adapter = dropdownAdapter
+
+        dropdownVarieties.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = parent?.getItemAtPosition(position).toString()
+                val selectedPokemonId = varietyList.find { it.pokemonName == selectedItem }?.id
+
+                if (selectedPokemonId != null && selectedPokemonId != args.pokemonId) {
+                    val navBuilder = NavOptions.Builder()
+                    navBuilder.setEnterAnim(android.R.anim.fade_in).setExitAnim(android.R.anim.fade_out)
+                            .setPopEnterAnim(android.R.anim.fade_in).setPopExitAnim(android.R.anim.fade_out)
+                    val action = PokemonFragmentDirections.actionPokemonFragmentSelf(selectedPokemonId)
+                    findNavController().navigate(action, navBuilder.build())
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Another interface callback
+            }
         }
     }
 

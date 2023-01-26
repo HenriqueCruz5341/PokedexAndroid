@@ -11,7 +11,7 @@ import com.example.pokedex.repository.database.model.*
     entities = [PokemonPageableEntity::class, TypeEntity::class,
         TypeRelationEntity::class, PokemonEntity::class,
         VarietyEntity::class, EvolutionEntity::class],
-    version = 16
+    version = 17
 )
 abstract class ClientDatabase : RoomDatabase() {
 
