@@ -6,11 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.TypeLineBinding
 import com.example.pokedex.repository.database.model.TypeEntity
 import com.example.pokedex.ui.recycleView.pokemon.OnPokemonListener
+import java.lang.reflect.Type
 
 class ListTypesAdapter : RecyclerView.Adapter<ListTypesViewHolder>() {
 
     private var typeList: List<TypeEntity> = listOf()
     private lateinit var listener: OnTypeListener
+    var selectedPositionList: MutableList<Int> = mutableListOf()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListTypesViewHolder {
@@ -22,6 +24,11 @@ class ListTypesAdapter : RecyclerView.Adapter<ListTypesViewHolder>() {
 
     override fun onBindViewHolder(holder: ListTypesViewHolder, position: Int) {
         holder.bindVH(typeList[position])
+        holder.deselect(typeList[position])
+        selectedPositionList.forEach {
+            if (position == it)
+                holder.select(typeList[position])
+        }
     }
 
     override fun getItemCount(): Int {
@@ -31,6 +38,14 @@ class ListTypesAdapter : RecyclerView.Adapter<ListTypesViewHolder>() {
     fun updateTypeList(list: List<TypeEntity>) {
         typeList = list
         notifyItemRangeChanged(0, list.size)
+    }
+
+    fun select(selectedList: List<TypeEntity>) {
+        selectedPositionList.clear()
+        selectedList.forEach {
+            selectedPositionList.add(typeList.indexOf(it))
+        }
+        notifyDataSetChanged()
     }
 
     fun setListener(typeListener: OnTypeListener) {

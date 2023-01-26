@@ -73,6 +73,10 @@ class DashboardFragment : Fragment() {
         dashboardViewModel.getTypeWeakness().observe(viewLifecycleOwner, Observer {
             typeDefenseAdapter.updateTypeList(it)
         })
+
+        dashboardViewModel.getSelectedTypeList().observe(viewLifecycleOwner, Observer {
+            typeAdapter.select(it)
+        })
     }
 
     override fun onDestroyView() {

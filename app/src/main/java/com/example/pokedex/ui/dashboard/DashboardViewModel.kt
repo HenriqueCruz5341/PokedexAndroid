@@ -16,6 +16,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private var typeDefenseList = MutableLiveData<List<TypeMultiplierDTO>>()
     private var typeAttackList = MutableLiveData<List<TypeMultiplierDTO>>()
     private var selectedTypes: MutableList<TypeEntity> = mutableListOf()
+    private var selectedTypesList = MutableLiveData<List<TypeEntity>>()
 
     private val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
     private val dbRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
@@ -34,6 +35,10 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun getTypeWeakness(): LiveData<List<TypeMultiplierDTO>> {
         return typeDefenseList
+    }
+
+    fun getSelectedTypeList(): LiveData<List<TypeEntity>> {
+        return selectedTypesList
     }
 
     fun getAllTypes() {
@@ -57,6 +62,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 selectedTypes.remove(type)
                 getAllEffectiveness()
                 getAllWeakness()
+                selectedTypesList.value = selectedTypes.toList()
                 return
             }
             if (selectedTypes.size >= 2) return
@@ -64,6 +70,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         selectedTypes.add(type)
         getAllEffectiveness()
         getAllWeakness()
+        selectedTypesList.value = selectedTypes.toList()
     }
 
     private fun getAll(listToChange: MutableLiveData<List<TypeMultiplierDTO>>, typeFunctionFirst: (selectId: Int)->List<TypeRelationEntity>, typeFunctionSecond: (typeRelation: TypeRelationEntity) -> TypeEntity?) {
