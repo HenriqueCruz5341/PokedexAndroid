@@ -16,6 +16,7 @@ import com.example.pokedex.repository.database.model.EvolutionEntity
 import com.example.pokedex.repository.database.model.PokemonEntity
 import com.example.pokedex.repository.database.model.VarietyEntity
 import com.example.pokedex.utils.Constants
+import com.example.pokedex.utils.Converter
 import com.example.pokedex.utils.ImageURL
 import retrofit2.Call
 import retrofit2.Callback
@@ -30,6 +31,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     private var imgShiny = MutableLiveData<Bitmap>()
     private var imgShinyFemale = MutableLiveData<Bitmap>()
     private var customEvolutionList = MutableLiveData<List<EvolutionEntity>>()
+    private var varietyList = MutableLiveData<List<VarietyEntity>>()
 
     private var _pokemonDto: PokemonDto? = null
     private var _pokemonSpecieDto: PokemonSpecieDto? = null
@@ -46,6 +48,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     val getImgShiny: MutableLiveData<Bitmap> get() = imgShiny
     val getImgShinyFemale: MutableLiveData<Bitmap> get() = imgShinyFemale
     val getCustomEvolutionList: MutableLiveData<List<EvolutionEntity>> get() = customEvolutionList
+    val getVarietyList: MutableLiveData<List<VarietyEntity>> get() = varietyList
 
     fun loadPokemon(id: Int) {
         requestPokemon(id)
@@ -132,7 +135,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
         try {
             val pokemonEntity = PokemonEntity().apply {
                 id = pokemonDto.id
-                name = pokemonDto.name
+                name = Converter.beautifyName(pokemonDto.name)
                 imgDefault = pokemonDto.sprites.default
                 imgFemale = pokemonDto.sprites.female ?: pokemonDto.sprites.default
                 imgShiny = pokemonDto.sprites.shiny ?: pokemonDto.sprites.default
@@ -170,16 +173,17 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
 
     private fun saveVarieties(){
         val varietyDAO = ClientDatabase.getDatabase(getApplication()).VarietyDAO()
+        val list = mutableListOf<VarietyEntity>()
         var msg = 0
 
         try {
             val varieties = pokemonSpecieDto.varieties
             varieties.forEach {
-                val varietyId = it.pokemon.url.split("/")[6].toInt()
+                val varietyId = Converter.idFromUrl(it.pokemon.url)
                 val variety = VarietyEntity().apply {
                     id = varietyId
                     pokemonId = pokemonSpecieDto.id
-                    pokemonName = it.pokemon.name
+                    pokemonName = Converter.beautifyName(it.pokemon.name)
                     isDefault = it.isDefault
                 }
 
@@ -188,7 +192,12 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                     varietyDAO.insert(variety)
                 else
                     varietyDAO.update(variety)
+
+                list.add(variety)
             }
+
+
+            varietyList.value = list
         } catch (e: SQLiteConstraintException){
             msg = Constants.BD_MSGS.CONSTRAINT
         } catch (e: Exception) {
@@ -201,13 +210,13 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
         var msg = 0
 
         try {
-            val firstEvolutionId = evolutionChainDto.chain.species.url.split("/")[6].toInt()
+            val firstEvolutionId = Converter.idFromUrl(evolutionChainDto.chain.species.url)
             val firstEvolution = EvolutionEntity().apply {
                 id = firstEvolutionId
                 chain = evolutionChainDto.id
                 order = 0
-                pokemonName = evolutionChainDto.chain.species.name
-                pokemonImage = Constants.API.URL_IMAGES_POKEMON.replace("{{id}}", firstEvolutionId.toString())
+                pokemonName = Converter.beautifyName(evolutionChainDto.chain.species.name)
+                pokemonImage = Converter.urlImageFromId(firstEvolutionId)
             }
             val evolutions = mutableListOf(firstEvolution)
             evolutions.addAll(linearizeEvolutionChain(evolutionChainDto.chain.evolvesTo, 1))
@@ -258,13 +267,13 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
             return list
         } else {
             evolvesToDto.forEach {
-                val pokemonId = it.species.url.split("/")[6].toInt()
+                val pokemonId = Converter.idFromUrl(it.species.url)
                 val evolution = EvolutionEntity().apply {
                     id = pokemonId
                     chain = evolutionChainDto.id
                     this.order = order
-                    pokemonName = it.species.name
-                    pokemonImage = Constants.API.URL_IMAGES_POKEMON.replace("{{id}}", pokemonId.toString())
+                    pokemonName = Converter.beautifyName(it.species.name)
+                    pokemonImage = Converter.urlImageFromId(pokemonId)
                 }
                 list.add(evolution)
                 list.addAll(linearizeEvolutionChain(it.evolvesTo, order + 1))

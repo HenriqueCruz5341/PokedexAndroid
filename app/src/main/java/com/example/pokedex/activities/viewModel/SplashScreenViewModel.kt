@@ -11,6 +11,7 @@ import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.repository.database.model.TypeEntity
 import com.example.pokedex.repository.database.model.TypeRelationEntity
 import com.example.pokedex.utils.Constants
+import com.example.pokedex.utils.Converter
 import com.example.pokedex.utils.MyCallback
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,12 +42,12 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         var msg = 0
         for(pokemon in pageablePokemons.results) {
             try {
-                val pokemonId = pokemon.url.split("/")[6].toInt()
+                val pokemonId = Converter.idFromUrl(pokemon.url)
                 val pokemonPageable = PokemonPageableEntity().apply {
                     id = pokemonId
-                    name = pokemon.name
+                    name = Converter.beautifyName(pokemon.name)
                     url = pokemon.url
-                    image = Constants.API.URL_IMAGES_POKEMON.replace("{{id}}", pokemonId.toString())
+                    image = Converter.urlImageFromId(pokemonId)
                     count = pageablePokemons.count
                 }
 

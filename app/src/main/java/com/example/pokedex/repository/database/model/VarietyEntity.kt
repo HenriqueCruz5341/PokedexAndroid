@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
     tableName = "Variety",
     indices = [Index(value = ["id"], unique = true), Index(
         value = ["pokemon_id"],
-        unique = true
+        unique = false
     )]
 )
 class VarietyEntity {
