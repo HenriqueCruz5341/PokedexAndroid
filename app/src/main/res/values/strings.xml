@@ -17,16 +17,6 @@
     <string name="pokemon_variant" translatable="false">PokemonVariant</string>
     <string name="pokemon_description" translatable="false">PokemonDescription</string>
     <string name="pokemon_type" translatable="false">PokemonType</string>
-    <string name="app_name">Pokedex</string>
-    <string name="title_lock_pokeball">Fechadura da pokebola</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="pokemon_image">PokemonImage</string>
-    <string name="pokemon_name">PokemonName</string>
-    <string name="type_name">TypeName</string>
     <string name="text_defense">Defender</string>
     <string name="text_attack">Attacker</string>
     <string name="multiplier">2x</string>
