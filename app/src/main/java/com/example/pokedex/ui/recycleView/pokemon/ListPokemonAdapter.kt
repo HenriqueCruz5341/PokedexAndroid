@@ -1,7 +1,7 @@
 package com.example.pokedex.ui.recycleView.pokemon
 
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.LoadingLineBinding
@@ -13,8 +13,9 @@ class ListPokemonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     private var pokemonList: MutableList<PokemonPageableEntity> = mutableListOf()
     private lateinit var listener: OnPokemonListener
 
-    private val item: Int = 0
-    private val loading: Int = 1
+    private val loading: Int = -1
+    private val spacing: Int = 0
+    private val item: Int = 1
 
     private var isLoadingAdded: Boolean = false
 
@@ -31,18 +32,12 @@ class ListPokemonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val pokemon = pokemonList[position]
 
-//        if(getItemViewType(position) == item){
-//            println("É ITEM: $position")
-//        }else
-//            println("É LOADING: $position")
-
         if(getItemViewType(position) == item) {
             val pokemonVH: ListPokemonViewHolder = holder as ListPokemonViewHolder
-            pokemonVH.getBinding().pokemonLine.visibility = View.VISIBLE
             pokemonVH.bindVH(pokemon)
         } else {
             val loadingVH: LoadingViewHolder = holder as LoadingViewHolder
-            loadingVH.getBinding().container.visibility = View.VISIBLE
+            if (getItemViewType(position) == spacing) loadingVH.bindVH()
         }
     }
 
@@ -51,46 +46,41 @@ class ListPokemonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(position == 0){
-            item
-        }else {
-            if (position == pokemonList.size - 1 && isLoadingAdded) {
-                loading
-            } else {
-                item
-            }
-        }
-    }
-
-    fun updatePokemonList(list: MutableList<PokemonPageableEntity>) {
-        pokemonList = list
-        notifyItemRangeChanged(0, list.size)
+        return if (pokemonList[position].id > 0) item else pokemonList[position].id
     }
 
     fun addAll(pokemons: MutableList<PokemonPageableEntity>) {
+        if (pokemonList.isNotEmpty() && pokemons[0].id < pokemonList[pokemonList.size-3].id) return
+
         for(pokemon in pokemons){
             add(pokemon)
         }
-        notifyItemRangeInserted(pokemonList.size - 1, 30)
     }
 
     private fun add(pokemon: PokemonPageableEntity) {
         pokemonList.add(pokemon)
-        //notifyItemInserted(pokemonList.size - 1)
+        notifyItemInserted(pokemonList.size - 1)
     }
 
     fun addLoadingFooter() {
-        isLoadingAdded = true
-        add(PokemonPageableEntity())
+        if(!isLoadingAdded) {
+            add(PokemonPageableEntity().apply { id = spacing; name = "Spacing"})
+            add(PokemonPageableEntity().apply { id = loading; name = "Loading"})
+            isLoadingAdded = true
+        }
     }
 
     fun removeLoadingFooter() {
-        isLoadingAdded = false
+        if (isLoadingAdded) {
+            val positionLoading: Int = pokemonList.size - 1
+            pokemonList.removeAt(positionLoading)
+            notifyItemRemoved(positionLoading)
 
-        val position: Int = pokemonList.size -1
-
-        pokemonList.removeAt(position)
-        notifyItemRemoved(position)
+            val positionSpacing: Int = pokemonList.size - 1
+            pokemonList.removeAt(positionSpacing)
+            notifyItemRemoved(positionSpacing)
+            isLoadingAdded = false
+        }
     }
 
     fun setListener(pokemonListener: OnPokemonListener) {

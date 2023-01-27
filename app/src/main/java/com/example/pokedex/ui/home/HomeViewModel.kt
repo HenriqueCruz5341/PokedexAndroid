@@ -2,6 +2,7 @@ package com.example.pokedex.ui.home
 
 import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,6 +21,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private var listMsg = MutableLiveData<Int>()
     private var pokemonList = MutableLiveData<MutableList<PokemonPageableEntity>>()
     private var newPokemonList = mutableListOf<PokemonPageableEntity>()
+    private var lastOffset = 0
+    private var lastLimit = 0
 
     fun getListMsg(): LiveData<Int> {
         return listMsg
@@ -30,29 +33,19 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadPokemons(offset: Int, limit: Int) {
-//        Log.d("HOMEVIEWMODEL","loadPokemons")
-//        Log.d("HOMEVIEWMODEL", "offset: $offset | limit: $limit")
+        if(lastLimit == limit && lastOffset == offset) return
+
         if(offset == 0) {
-            val db = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO()
-            try {
-                val resp = db.getPagination(offset, limit).toMutableList()
-                if (resp.isEmpty()) {
-                    listMsg.value = Constants.BD_MSGS.NOT_FOUND
-                } else {
-                    listMsg.value = Constants.BD_MSGS.SUCCESS
-                    pokemonList.value = resp
-                }
-            } catch (e: Exception) {
-                listMsg.value = Constants.BD_MSGS.FAIL
-            }
+            requestPokemonsDatabase(offset, limit)
         }else{
-            //TODO: Refactor this code
             newPokemonList = mutableListOf()
             for (pokemon in pokemonList.value!!) {
                 newPokemonList.add(pokemon)
             }
             requestPokemons(offset, limit)
         }
+        lastLimit = limit
+        lastOffset = offset
     }
 
     private fun requestPokemons(offset: Int, limit: Int) {
@@ -65,10 +58,26 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             ) {
                 savePokemons(response.body()!!)
             }
-            //TODO: Handle error
+
             override fun onFailure(call: Call<PageableDto>, t: Throwable) {
+                requestPokemonsDatabase(offset, limit)
             }
         })
+    }
+
+    private fun requestPokemonsDatabase(offset: Int, limit: Int) {
+        val pageableDAO = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO()
+        try {
+            val resp = pageableDAO.getPagination(offset, limit).toMutableList()
+            if (resp.isEmpty()) {
+                listMsg.value = Constants.BD_MSGS.NOT_FOUND
+            } else {
+                listMsg.value = Constants.BD_MSGS.SUCCESS
+                pokemonList.value = resp
+            }
+        } catch (e: Exception) {
+            listMsg.value = Constants.BD_MSGS.FAIL
+        }
     }
 
     private fun savePokemons(pageablePokemons : PageableDto) {

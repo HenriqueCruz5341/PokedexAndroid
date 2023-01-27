@@ -21,4 +21,7 @@ interface VarietyDAO {
     @Query("SELECT * FROM Variety WHERE id = :id")
     fun getById(id: Int): VarietyEntity?
 
+    @Query("SELECT * FROM Variety WHERE pokemon_id = :pokemonId")
+    fun getByPokemonId(pokemonId: Int): List<VarietyEntity?>
+
 }

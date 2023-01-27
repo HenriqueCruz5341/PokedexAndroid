@@ -7,15 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentHomeBinding
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.ui.recycleView.pokemon.ListPokemonAdapter
@@ -29,7 +24,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val pokemonsAdapter = ListPokemonAdapter()
     private val offsetStart: Int = 0
-    private var isLoading: Boolean = false
+    private var isLoading: Boolean = true
     private var isLastOffset: Boolean = false
     private var lastOffset: Int = offsetStart
     private var currentOffset: Int = offsetStart
@@ -68,7 +63,7 @@ class HomeFragment : Fragment() {
 
         binding.recyclerListPokemons.addOnScrollListener(object : PaginationScrollListener(binding.recyclerListPokemons.layoutManager as GridLayoutManager) {
             override fun loadMoreItems() {
-                isLoading = true
+                isLoading = false
                 currentOffset += limit
 
                 Handler(Looper.myLooper()!!).postDelayed({
@@ -96,17 +91,20 @@ class HomeFragment : Fragment() {
     }
 
     private fun setObserver() {
-        homeViewModel.getPokemonList().observe(viewLifecycleOwner, Observer {
-//            Log.d("HomeFragment", "setObserver: ${it.size}")
-//            Log.d("HomeFragment", "setObserver: ${it.last().name}")
-            lastOffset = it[0].count / limit * limit
-            pokemonsAdapter.addAll(it.subList(it.size - limit, it.size))
-            pokemonsAdapter.removeLoadingFooter()
-            isLoading = false
+        homeViewModel.getPokemonList().observe(viewLifecycleOwner) {
+            if (!isLoading) pokemonsAdapter.removeLoadingFooter()
 
-            if (currentOffset != lastOffset) pokemonsAdapter.addLoadingFooter()
-            else isLastOffset = true
-        })
+            lastOffset = it[0].count / limit * limit
+
+            pokemonsAdapter.addAll(it.subList(it.size - limit, it.size))
+
+            if (currentOffset != lastOffset) {
+                isLoading = true
+                pokemonsAdapter.addLoadingFooter()
+            } else {
+                isLastOffset = true
+            }
+        }
     }
 
     override fun onDestroyView() {

@@ -8,6 +8,10 @@ class Constants {
         val URL_IMAGES_POKEMON = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{id}}.png"
     }
 
+    object BD {
+        val BD_NAME = "pokedex.db"
+    }
+
     object BD_MSGS {
         val SUCCESS = 1
         val FAIL = 0

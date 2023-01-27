@@ -38,7 +38,7 @@
         <action
             android:id="@+id/action_pokemonFragment_to_navigation_home"
             app:destination="@id/navigation_home"
-            app:popUpTo="@+id/mobile_navigation"
+            app:popUpTo="@+id/navigation_home"
             app:popUpToInclusive="true"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@anim/slide_down"

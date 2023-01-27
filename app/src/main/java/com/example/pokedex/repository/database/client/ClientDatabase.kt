@@ -6,12 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.pokedex.repository.database.dao.*
 import com.example.pokedex.repository.database.model.*
+import com.example.pokedex.utils.Constants
 
 @Database(
     entities = [PokemonPageableEntity::class, TypeEntity::class,
         TypeRelationEntity::class, PokemonEntity::class,
         VarietyEntity::class, EvolutionEntity::class],
-    version = 17
+    version = 1
 )
 abstract class ClientDatabase : RoomDatabase() {
 
@@ -31,7 +32,7 @@ abstract class ClientDatabase : RoomDatabase() {
                 synchronized(ClientDatabase::class) {
 
                     INSTANCE =
-                        Room.databaseBuilder(context, ClientDatabase::class.java, "mydatabase.db")
+                        Room.databaseBuilder(context, ClientDatabase::class.java, Constants.BD.BD_NAME)
                             .allowMainThreadQueries().fallbackToDestructiveMigration().build()
                 }
             }

@@ -22,17 +22,21 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
 
     fun requestPokemons(callback: MyCallback) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
-        val pokeApi: Call<PageableDto> = apiPokeService.getPokemonPageable(0 , 30)
+        val pokeApi: Call<PageableDto> = apiPokeService.getPokemonPageable(0, 30)
+
         pokeApi.enqueue(object : Callback<PageableDto> {
             override fun onResponse(
                 call: Call<PageableDto>,
                 response: Response<PageableDto>,
             ) {
-                savePokemons(response.body()!!)
+                if(response.body() != null) {
+                    savePokemons(response.body() as PageableDto)
+                }
                 callback.run()
             }
-            //TODO: Handle error
+
             override fun onFailure(call: Call<PageableDto>, t: Throwable) {
+                callback.run()
             }
         })
     }
@@ -85,7 +89,6 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         }
 
         if(dbTypes.getAll().isEmpty()) {
-            print("a lista é essa ")
             listTypeEntity.forEach{
                 try {
                     print("${it.name} ")
@@ -102,7 +105,6 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
                     }
                 }
             }
-            println("")
         }
 
         if(dbTypesRelation.getAll().isEmpty()) {

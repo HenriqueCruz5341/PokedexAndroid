@@ -33,12 +33,9 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     private var customEvolutionList = MutableLiveData<List<EvolutionEntity>>()
     private var varietyList = MutableLiveData<List<VarietyEntity>>()
 
-    private var _pokemonDto: PokemonDto? = null
-    private var _pokemonSpecieDto: PokemonSpecieDto? = null
-    private var _evolutionChainDto: EvolutionChainDto? = null
-    private val pokemonDto get() = _pokemonDto!!
-    private val pokemonSpecieDto get() = _pokemonSpecieDto!!
-    private val evolutionChainDto get() = _evolutionChainDto!!
+    private var pokemonDto: PokemonDto = PokemonDto()
+    private var pokemonSpecieDto: PokemonSpecieDto = PokemonSpecieDto()
+    private var evolutionChainDto: EvolutionChainDto = EvolutionChainDto()
 
     val getPokemon: MutableLiveData<PokemonEntity> get() = pokemon
     val getShinyButton: MutableLiveData<Boolean> get() = shinyButton
@@ -50,29 +47,39 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     val getCustomEvolutionList: MutableLiveData<List<EvolutionEntity>> get() = customEvolutionList
     val getVarietyList: MutableLiveData<List<VarietyEntity>> get() = varietyList
 
-    fun loadPokemon(id: Int) {
-        requestPokemon(id)
-    }
-
-
-    private fun requestPokemon(id: Int) {
+    fun loadPokemon(pokemonId: Int) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
-        val pokeApi: Call<PokemonDto> = apiPokeService.getPokemonById(id)
+        val pokeApi: Call<PokemonDto> = apiPokeService.getPokemonById(pokemonId)
         pokeApi.enqueue(object : Callback<PokemonDto> {
             override fun onResponse(
                 call: Call<PokemonDto>,
                 response: Response<PokemonDto>,
             ) {
-                _pokemonDto = response.body()
-                val specieId = _pokemonDto?.species?.url?.split("/")?.get(6)?.toInt()
-                if (specieId != null) {
+                if(response.body() != null) {
+                    pokemonDto = response.body() as PokemonDto
+                    val specieId = Converter.idFromUrl(pokemonDto.species.url)
                     requestPokemonSpecie(specieId)
                 }
             }
-            //TODO: Handle error
+
             override fun onFailure(call: Call<PokemonDto>, t: Throwable) {
+                requestPokemonDatabase(pokemonId)
             }
         })
+    }
+
+    private fun requestPokemonDatabase(pokemonId: Int) {
+        val pokemonDAO = ClientDatabase.getDatabase(getApplication()).PokemonDAO()
+        val varietyDAO = ClientDatabase.getDatabase(getApplication()).VarietyDAO()
+        val evolutionDAO = ClientDatabase.getDatabase(getApplication()).EvolutionDAO()
+
+        val pokemonEntity = pokemonDAO.getById(pokemonId)
+        if (pokemonEntity != null) {
+            pokemon.value = pokemonEntity ?: PokemonEntity()
+            varietyList.value = varietyDAO.getByPokemonId(pokemonId).filterNotNull()
+            val evolutions = evolutionDAO.getChainByPokemonId(pokemonId).filterNotNull()
+            loadCustomEvolutionList(evolutions.toMutableList())
+        }
     }
 
     private fun requestPokemonSpecie(id: Int) {
@@ -83,9 +90,9 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                 call: Call<PokemonSpecieDto>,
                 response: Response<PokemonSpecieDto>,
             ) {
-                _pokemonSpecieDto = response.body()
-                val evolutionId = _pokemonSpecieDto?.evolutionChain?.url?.split("/")?.get(6)?.toInt()
-                if (evolutionId != null) {
+                if(response.body() != null) {
+                    pokemonSpecieDto = response.body() as PokemonSpecieDto
+                    val evolutionId = Converter.idFromUrl(pokemonSpecieDto.evolutionChain.url)
                     requestEvolutionChain(evolutionId)
                 }
             }
@@ -103,8 +110,8 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                 call: Call<EvolutionChainDto>,
                 response: Response<EvolutionChainDto>
             ) {
-                _evolutionChainDto = response.body()
-                if (_evolutionChainDto != null) {
+                if(response.body() != null) {
+                    evolutionChainDto = response.body() as EvolutionChainDto
                     savePokemon()
                 }
             }
