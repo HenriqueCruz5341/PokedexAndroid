@@ -125,6 +125,13 @@ class DashboardFragment : Fragment() {
         })
 
         dashboardViewModel.getSelectedTypeList().observe(viewLifecycleOwner, Observer {
+            if(it.size != 1) {
+                binding.recyclerListAttack.visibility = View.GONE
+                binding.textAttack.visibility = View.GONE
+            } else {
+                binding.recyclerListAttack.visibility = View.VISIBLE
+                binding.textAttack.visibility = View.VISIBLE
+            }
             typeAdapter.select(it)
         })
     }
