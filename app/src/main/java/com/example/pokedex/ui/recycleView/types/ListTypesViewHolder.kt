@@ -7,8 +7,8 @@ import com.example.pokedex.databinding.TypeLineBinding
 import com.example.pokedex.repository.database.model.TypeEntity
 
 class ListTypesViewHolder(private val binding: TypeLineBinding, private val listener: OnTypeListener) : RecyclerView.ViewHolder(binding.root) {
-    fun bindVH(type: TypeEntity, color: Int){
-        binding.typeName.text = type.name
+    fun bindVH(type: TypeEntity, name: String, color: Int){
+        binding.typeName.text = name
 
         binding.typeName.setOnClickListener {
             listener.onClick(type)

@@ -64,15 +64,22 @@ class DashboardFragment : Fragment() {
 
     private fun setObserver() {
         dashboardViewModel.getTypeList().observe(viewLifecycleOwner, Observer {
-            var typeColors: MutableList<Int> = mutableListOf()
+            val typeColors: MutableList<Int> = mutableListOf()
+            val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {
                 typeColors.add(
                     resources.getColor(
                         com.example.pokedex.utils.Resources.getColorByName(it.name), null
                     )
                 )
+                typeStrings.add(
+                    resources.getString(
+                        com.example.pokedex.utils.Resources.getStringByName(it.name)
+                    )
+                )
             }
             typeAdapter.updateColors(typeColors.toList())
+            typeAdapter.updateNames(typeStrings.toList())
             typeAdapter.updateTypeList(it)
 
         })

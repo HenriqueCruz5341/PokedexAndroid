@@ -14,6 +14,7 @@ class ListTypesAdapter : RecyclerView.Adapter<ListTypesViewHolder>() {
     private lateinit var listener: OnTypeListener
     var selectedPositionList: MutableList<Int> = mutableListOf()
     var colorsList: List<Int> = listOf()
+    var namesList: List<String> = listOf()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListTypesViewHolder {
@@ -24,7 +25,7 @@ class ListTypesAdapter : RecyclerView.Adapter<ListTypesViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ListTypesViewHolder, position: Int) {
-        holder.bindVH(typeList[position], colorsList[position])
+        holder.bindVH(typeList[position], namesList[position], colorsList[position])
         holder.deselect(typeList[position])
         selectedPositionList.forEach {
             if (position == it)
@@ -43,6 +44,10 @@ class ListTypesAdapter : RecyclerView.Adapter<ListTypesViewHolder>() {
 
     fun updateColors(list: List<Int>) {
         colorsList = list
+    }
+
+    fun updateNames(list: List<String>) {
+        namesList = list
     }
 
     fun select(selectedList: List<TypeEntity>) {
