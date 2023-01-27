@@ -1,6 +1,5 @@
 package com.example.pokedex.ui.recycleView.types
 
-import android.content.res.Resources
 import android.graphics.Color
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.TypeLineBinding
@@ -17,11 +16,11 @@ class ListTypesViewHolder(private val binding: TypeLineBinding, private val list
     }
 
     fun select(type: TypeEntity) {
-        binding.typeItem.setBackgroundColor(Color.GREEN)
+        binding.typeItem.setBackgroundColor(Color.BLACK)
     }
 
     fun deselect(type: TypeEntity) {
-        binding.typeItem.setBackgroundColor(Color.WHITE)
+        binding.typeItem.setBackgroundColor(Color.TRANSPARENT)
     }
 
 }
