@@ -85,10 +85,42 @@ class DashboardFragment : Fragment() {
         })
 
         dashboardViewModel.getTypeEffectiveness().observe(viewLifecycleOwner, Observer {
+            val typeColors: MutableList<Int> = mutableListOf()
+            val typeStrings: MutableList<String> = mutableListOf()
+            it.forEach {
+                typeColors.add(
+                    resources.getColor(
+                        com.example.pokedex.utils.Resources.getColorByName(it.name), null
+                    )
+                )
+                typeStrings.add(
+                    resources.getString(
+                        com.example.pokedex.utils.Resources.getStringByName(it.name)
+                    )
+                )
+            }
+            typeAttackAdapter.updateColorsList(typeColors.toList())
+            typeAttackAdapter.updateNamesList(typeStrings.toList())
             typeAttackAdapter.updateTypeList(it)
         })
 
         dashboardViewModel.getTypeWeakness().observe(viewLifecycleOwner, Observer {
+            val typeColors: MutableList<Int> = mutableListOf()
+            val typeStrings: MutableList<String> = mutableListOf()
+            it.forEach {
+                typeColors.add(
+                    resources.getColor(
+                        com.example.pokedex.utils.Resources.getColorByName(it.name), null
+                    )
+                )
+                typeStrings.add(
+                    resources.getString(
+                        com.example.pokedex.utils.Resources.getStringByName(it.name)
+                    )
+                )
+            }
+            typeDefenseAdapter.updateColorsList(typeColors.toList())
+            typeDefenseAdapter.updateNamesList(typeStrings.toList())
             typeDefenseAdapter.updateTypeList(it)
         })
 

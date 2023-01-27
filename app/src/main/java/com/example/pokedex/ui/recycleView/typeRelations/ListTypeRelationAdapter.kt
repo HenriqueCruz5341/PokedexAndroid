@@ -9,6 +9,8 @@ import com.example.pokedex.repository.database.dto.TypeMultiplierDTO
 class ListTypeRelationAdapter : RecyclerView.Adapter<ListTypeRelationViewHolder>() {
 
     private var typeMultiplierList: List<TypeMultiplierDTO> = listOf()
+    var colorsList: List<Int> = listOf()
+    var namesList: List<String> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListTypeRelationViewHolder {
         val item = TypeRelationLineBinding.inflate(
@@ -18,7 +20,7 @@ class ListTypeRelationAdapter : RecyclerView.Adapter<ListTypeRelationViewHolder>
     }
 
     override fun onBindViewHolder(holder: ListTypeRelationViewHolder, position: Int) {
-        holder.bindVH(typeMultiplierList[position])
+        holder.bindVH(typeMultiplierList[position], namesList[position], colorsList[position])
     }
 
     override fun getItemCount(): Int {
@@ -28,5 +30,13 @@ class ListTypeRelationAdapter : RecyclerView.Adapter<ListTypeRelationViewHolder>
     fun updateTypeList(list: List<TypeMultiplierDTO>) {
         typeMultiplierList = list
         notifyDataSetChanged()
+    }
+
+    fun updateColorsList(list: List<Int>) {
+        colorsList = list
+    }
+
+    fun updateNamesList(list: List<String>) {
+        namesList = list
     }
 }
