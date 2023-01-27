@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.databinding.FragmentNotificationsBinding
+import com.example.pokedex.ui.recycleView.region.ListRegionAdapter
+import com.example.pokedex.ui.recycleView.region.OnRegionListener
 
 class NotificationsFragment : Fragment() {
 
@@ -16,23 +19,43 @@ class NotificationsFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var notificationsViewModel: NotificationsViewModel
+
+    private var regionAdapter: ListRegionAdapter = ListRegionAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
+        notificationsViewModel =
             ViewModelProvider(this).get(NotificationsViewModel::class.java)
 
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textNotifications
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        binding.recyclerListRegion.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerListRegion.adapter = regionAdapter
+
+        val listener = object : OnRegionListener {
+            override fun onClick(name: String) {
+                println(name)
+            }
         }
+
+        regionAdapter.setListener(listener)
+
+        notificationsViewModel.loadRegions()
+
+        setObserver()
+
         return root
+    }
+
+    private fun setObserver() {
+        notificationsViewModel.getRegions().observe(viewLifecycleOwner, Observer {
+            regionAdapter.updateRegionList(it)
+        })
     }
 
     override fun onDestroyView() {

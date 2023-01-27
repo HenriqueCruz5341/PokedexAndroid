@@ -26,4 +26,6 @@ interface PokeApiService {
     @GET("evolution-chain/{id}")
     fun getEvolutionChainById(@Path("id") id: Int): Call<EvolutionChainDto>
 
+    @GET("region")
+    fun getRegionPageable(): Call<PageableDto>
 }
