@@ -1,5 +1,6 @@
 package com.example.pokedex.ui.dashboard
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -63,7 +64,17 @@ class DashboardFragment : Fragment() {
 
     private fun setObserver() {
         dashboardViewModel.getTypeList().observe(viewLifecycleOwner, Observer {
+            var typeColors: MutableList<Int> = mutableListOf()
+            it.forEach {
+                typeColors.add(
+                    resources.getColor(
+                        com.example.pokedex.utils.Resources.getColorByName(it.name), null
+                    )
+                )
+            }
+            typeAdapter.updateColors(typeColors.toList())
             typeAdapter.updateTypeList(it)
+
         })
 
         dashboardViewModel.getTypeEffectiveness().observe(viewLifecycleOwner, Observer {
