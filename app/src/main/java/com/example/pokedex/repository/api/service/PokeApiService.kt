@@ -4,6 +4,7 @@ import com.example.pokedex.repository.api.model.PageableDto
 import com.example.pokedex.repository.api.model.evolution.EvolutionChainDto
 import com.example.pokedex.repository.api.model.pokemon.PokemonDto
 import com.example.pokedex.repository.api.model.pokemonSpecie.PokemonSpecieDto
+import com.example.pokedex.repository.api.model.region.LocationDto
 import com.example.pokedex.repository.api.model.region.RegionDto
 import retrofit2.Call
 import retrofit2.http.GET
@@ -32,4 +33,7 @@ interface PokeApiService {
 
     @GET("region/{id}")
     fun getRegionById(@Path("id") id: Int): Call<RegionDto>
+
+    @GET("location/{id}")
+    fun getLocationById(@Path("id") id: Int): Call<LocationDto>
 }

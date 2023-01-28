@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.location.LocationFragment">
+    tools:context=".ui.notifications.NotificationsFragment">
 
     <TextView
-        android:id="@+id/text_region_name"
+        android:id="@+id/text_location_name"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="@string/text_region_name"
@@ -15,8 +15,8 @@
         android:layout_height="wrap_content" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_list_location"
-        app:layout_constraintTop_toBottomOf="@id/text_region_name"
+        android:id="@+id/recycler_list_location_area"
+        app:layout_constraintTop_toBottomOf="@id/text_location_name"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
