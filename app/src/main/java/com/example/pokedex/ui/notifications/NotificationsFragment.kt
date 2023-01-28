@@ -44,7 +44,8 @@ class NotificationsFragment : Fragment() {
             override fun onClick(region: PageableItemDto) {
                  val action = NotificationsFragmentDirections
                      .actionNavigationNotificationsToNavigationLocation(
-                         Converter.idFromUrl(region.url)
+                         Converter.idFromUrl(region.url),
+                         region.name
                      )
                 findNavController().navigate(action)
             }

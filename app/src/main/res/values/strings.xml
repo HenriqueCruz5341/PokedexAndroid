@@ -20,6 +20,7 @@
     <string name="pokemon_type" translatable="false">PokemonType</string>
     <string name="text_defense">Defender</string>
     <string name="text_attack">Attacker</string>
+    <string name="text_region_name" translatable="false">Region</string>
     <string name="multiplier" translatable="false">2x</string>
     <string name="region_name" translatable="false">Region</string>
     <!-- Strings used for fragments for navigation -->

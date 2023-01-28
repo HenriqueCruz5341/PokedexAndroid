@@ -41,6 +41,9 @@
         <argument
             android:name="regionId"
             app:argType="integer" />
+        <argument
+            android:name="regionName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/pokemonFragment"
