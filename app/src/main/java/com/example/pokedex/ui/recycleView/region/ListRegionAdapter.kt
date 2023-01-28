@@ -31,7 +31,7 @@ class ListRegionAdapter : RecyclerView.Adapter<ListRegionViewHolder>() {
 
     fun updateRegionList(list: List<PageableItemDto>) {
         regionList = list
-        notifyItemRangeChanged(0, list.size)
+        notifyDataSetChanged()
     }
 
     fun setListener(regionListener: OnRegionListener) {

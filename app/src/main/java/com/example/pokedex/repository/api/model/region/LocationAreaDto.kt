@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 class LocationAreaDto {
     @SerializedName("pokemon_encounters")
-    var encounters: List<PokemonBasicDto> = listOf()
+    var encounters: List<PageableItemDto> = listOf()
 
     @SerializedName("id")
     var id: Int = 0

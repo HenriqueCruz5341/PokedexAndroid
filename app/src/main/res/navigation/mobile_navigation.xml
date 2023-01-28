@@ -58,6 +58,20 @@
         <argument
             android:name="locationName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_navigation_location_area_to_navigation_location_pokemon"
+            app:destination="@id/navigation_location_pokemon" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_location_pokemon"
+        android:name="com.example.pokedex.ui.locationpokemon.LocationPokemonFragment"
+        android:label="@string/title_notifications">
+        <argument
+            android:name="locationAreaId"
+            app:argType="integer" />
+        <argument
+            android:name="locationAreaName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/pokemonFragment"
