@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.databinding.FragmentNotificationsBinding
+import com.example.pokedex.repository.api.model.PageableItemDto
 import com.example.pokedex.ui.recycleView.region.ListRegionAdapter
 import com.example.pokedex.ui.recycleView.region.OnRegionListener
+import com.example.pokedex.utils.Converter
 
 class NotificationsFragment : Fragment() {
 
@@ -38,8 +41,12 @@ class NotificationsFragment : Fragment() {
         binding.recyclerListRegion.adapter = regionAdapter
 
         val listener = object : OnRegionListener {
-            override fun onClick(name: String) {
-                println(name)
+            override fun onClick(region: PageableItemDto) {
+                 val action = NotificationsFragmentDirections
+                     .actionNavigationNotificationsToNavigationLocation(
+                         Converter.idFromUrl(region.url)
+                     )
+                findNavController().navigate(action)
             }
         }
 

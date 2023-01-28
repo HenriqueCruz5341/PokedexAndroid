@@ -8,6 +8,7 @@ import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableDto
 import com.example.pokedex.repository.api.model.PageableItemDto
 import com.example.pokedex.repository.api.model.pokemon.PokemonDto
+import com.example.pokedex.repository.api.model.region.RegionDto
 import com.example.pokedex.repository.api.service.PokeApiService
 import com.example.pokedex.utils.Converter
 import retrofit2.Call
@@ -16,9 +17,9 @@ import retrofit2.Response
 
 class NotificationsViewModel : ViewModel() {
 
-    var regionPageableItemList = MutableLiveData<List<String>>()
+    var regionPageableItemList = MutableLiveData<List<PageableItemDto>>()
 
-    fun getRegions(): LiveData<List<String>> {
+    fun getRegions(): LiveData<List<PageableItemDto>> {
         return regionPageableItemList
     }
 
@@ -32,15 +33,34 @@ class NotificationsViewModel : ViewModel() {
             ) {
                 if(response.body() != null) {
                     val resp = response.body() as PageableDto
-                    val regionNamesList: MutableList<String> = mutableListOf()
-                    resp.results.forEach {
-                        regionNamesList.add(it.name)
-                    }
-                    regionPageableItemList.value = regionNamesList.toList()
+                    regionPageableItemList.value = resp.results
                 }
             }
 
             override fun onFailure(call: Call<PageableDto>, t: Throwable) {
+                // TODO get from database
+                //requestPokemonDatabase(pokemonId)
+                println("FAIL")
+            }
+        })
+    }
+
+    fun getRegion(id: Int) {
+        val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
+        val pokeApi: Call<RegionDto> = apiPokeService.getRegionById(id)
+        pokeApi.enqueue(object : Callback<RegionDto> {
+            override fun onResponse(
+                call: Call<RegionDto>,
+                response: Response<RegionDto>,
+            ) {
+                if(response.body() != null) {
+                    val resp = response.body() as RegionDto
+                    val locationsList: List<PageableItemDto> = resp.locations
+                }
+            }
+
+            override fun onFailure(call: Call<RegionDto>, t: Throwable) {
+                // TODO get from database
                 //requestPokemonDatabase(pokemonId)
                 println("FAIL")
             }

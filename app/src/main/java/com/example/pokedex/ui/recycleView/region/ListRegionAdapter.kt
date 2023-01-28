@@ -5,11 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.RegionLineBinding
 import com.example.pokedex.databinding.TypeLineBinding
+import com.example.pokedex.repository.api.model.PageableItemDto
 import com.example.pokedex.repository.database.model.TypeEntity
 
 class ListRegionAdapter : RecyclerView.Adapter<ListRegionViewHolder>() {
 
-    private var regionList: List<String> = listOf()
+    private var regionList: List<PageableItemDto> = listOf()
     private lateinit var listener: OnRegionListener
 
 
@@ -28,7 +29,7 @@ class ListRegionAdapter : RecyclerView.Adapter<ListRegionViewHolder>() {
         return regionList.count()
     }
 
-    fun updateRegionList(list: List<String>) {
+    fun updateRegionList(list: List<PageableItemDto>) {
         regionList = list
         notifyItemRangeChanged(0, list.size)
     }
