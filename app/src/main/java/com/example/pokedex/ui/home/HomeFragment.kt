@@ -1,5 +1,6 @@
 package com.example.pokedex.ui.home
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,11 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentHomeBinding
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.ui.recycleView.pokemon.ListPokemonAdapter
 import com.example.pokedex.ui.recycleView.pokemon.OnPokemonListener
 import com.example.pokedex.ui.recycleView.pokemon.PaginationScrollListener
+import com.example.pokedex.utils.Constants
+import com.example.pokedex.utils.Resources
+import com.google.android.material.snackbar.Snackbar
 
 class HomeFragment : Fragment() {
 
@@ -142,6 +147,23 @@ class HomeFragment : Fragment() {
                 pokemonsAdapter.setItems(it)
             }
         }
+        homeViewModel.getStatusMessage.observe(viewLifecycleOwner) {
+            if (it.code != Constants.DB_MSGS.SUCCESS && it.code != Constants.API_MSGS.SUCCESS) {
+                showSnackBar(
+                    resources.getString(Resources.getErrorMessageByStatusMessage(it))
+                        .replace("{{id}}", it.item.toString())
+                )
+            }
+        }
+    }
+
+    private fun showSnackBar(text: String) {
+        val snack = Snackbar.make(binding.homeFragment, text, Snackbar.LENGTH_SHORT)
+        snack.setBackgroundTint(resources.getColor(R.color.red, null))
+        snack.setTextColor(Color.WHITE)
+        snack.setTextMaxLines(2)
+
+        snack.show()
     }
 
 

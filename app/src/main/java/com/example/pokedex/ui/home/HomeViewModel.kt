@@ -2,8 +2,8 @@ package com.example.pokedex.ui.home
 
 import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableDto
@@ -14,21 +14,23 @@ import com.example.pokedex.repository.database.client.ClientDatabase
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
 import com.example.pokedex.utils.Constants
 import com.example.pokedex.utils.Converter
+import com.example.pokedex.utils.StatusMessage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
-    private var listMsg = MutableLiveData<Int>()
     private var pokemonList = MutableLiveData<List<PokemonPageableEntity>>()
     private var filteredPokemonList = MutableLiveData<List<PokemonPageableEntity>>()
     private var newPokemonList = mutableListOf<PokemonPageableEntity>()
     private var lastOffset = 0
     private var lastLimit = 0
+    private var statusMessage = MutableLiveData<StatusMessage>()
 
-    val getListMsg: LiveData<Int> get() = listMsg
     val getPokemonList: MutableLiveData<List<PokemonPageableEntity>> get() = pokemonList
     val getFilteredPokemonList: MutableLiveData<List<PokemonPageableEntity>> get() = filteredPokemonList
+    val getStatusMessage : MutableLiveData<StatusMessage> get() = statusMessage
+
 
     fun loadPokemons(offset: Int, limit: Int) {
         if(lastLimit == limit && lastOffset == offset) return
@@ -54,11 +56,19 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 call: Call<PageableDto>,
                 response: Response<PageableDto>,
             ) {
-                savePokemons(response.body()!!)
-                pokemonList.value = newPokemonList
+                if (response.body() != null) {
+                    savePokemons(response.body()!!)
+                    statusMessage.value =
+                        StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.SUCCESS)
+                    pokemonList.value = newPokemonList
+                } else {
+                    statusMessage.value =
+                        StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.NOT_FOUND)
+                }
             }
 
             override fun onFailure(call: Call<PageableDto>, t: Throwable) {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.FAIL)
                 requestPokemonsDatabase(offset, limit)
             }
         })
@@ -69,22 +79,21 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         try {
             val resp = pageableDAO.getPagination(offset, limit).toMutableList()
             if (resp.isEmpty()) {
-                listMsg.value = Constants.BD_MSGS.NOT_FOUND
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.NOT_FOUND)
             } else {
-                listMsg.value = Constants.BD_MSGS.SUCCESS
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.SUCCESS)
                 pokemonList.value = resp
             }
         } catch (e: Exception) {
-            listMsg.value = Constants.BD_MSGS.FAIL
+            statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.FAIL)
         }
     }
 
     private fun savePokemons(pageablePokemons : PageableDto) {
         val db = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO()
-        var msg = 0
         for(pokemon in pageablePokemons.results) {
+            val pokemonId = Converter.idFromUrl(pokemon.url)
             try {
-                val pokemonId = Converter.idFromUrl(pokemon.url)
                 val pokemonPageable = PokemonPageableEntity().apply {
                     id = pokemonId
                     name = Converter.beautifyName(pokemon.name)
@@ -99,17 +108,13 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 else
                     db.update(pokemonPageable)
 
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.SUCCESS)
                 newPokemonList.add(pokemonPageable)
 
             } catch (e: SQLiteConstraintException){
-                msg = Constants.BD_MSGS.CONSTRAINT
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.CONSTRAINT, pokemonId)
             } catch (e: Exception) {
-                msg = Constants.BD_MSGS.FAIL
-            } finally {
-                if(msg != 0) {
-                    println("Erro ao inserir no banco, code: $msg")
-                    msg = 0
-                }
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.FAIL)
             }
         }
     }
@@ -146,13 +151,17 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                         results = listOf(item)
                     }
 
+                    statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.SUCCESS)
                     newPokemonList = mutableListOf()
                     savePokemons(pageable)
                     filteredPokemonList.value = newPokemonList
+                } else {
+                    statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.NOT_FOUND)
                 }
             }
 
             override fun onFailure(call: Call<PokemonDto>, t: Throwable) {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.FAIL)
                 searchPokemonsDatabase(searchText)
             }
         })
@@ -167,13 +176,19 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 newPokemonList = mutableListOf()
                 newPokemonList.add(pokemon)
                 filteredPokemonList.value = newPokemonList
+            } else {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.NOT_FOUND)
             }
         } else {
             val enclosedSearchText = "%$searchText%"
             val pokemons = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO().getByName(enclosedSearchText)
-            newPokemonList = mutableListOf()
-            newPokemonList.addAll(pokemons.filterNotNull())
-            filteredPokemonList.value = newPokemonList
+            if (pokemons.isNotEmpty()) {
+                newPokemonList = mutableListOf()
+                newPokemonList.addAll(pokemons.filterNotNull())
+                filteredPokemonList.value = newPokemonList
+            } else {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.NOT_FOUND)
+            }
         }
     }
 

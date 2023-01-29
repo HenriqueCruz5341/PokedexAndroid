@@ -1,5 +1,6 @@
 package com.example.pokedex.ui.pokemon
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,7 @@ import com.example.pokedex.ui.recycleView.typeRelations.ListTypeRelationAdapter
 import com.example.pokedex.utils.Constants
 import com.example.pokedex.utils.Converter
 import com.example.pokedex.utils.Resources
+import com.google.android.material.snackbar.Snackbar
 
 
 class PokemonFragment : Fragment() {
@@ -159,6 +161,14 @@ class PokemonFragment : Fragment() {
             typeRelationAdapter.updateNamesList(typeStrings.toList())
             typeRelationAdapter.updateTypeList(it)
         }
+        pokemonViewModel.getStatusMessage.observe(viewLifecycleOwner) {
+            if (it.code != Constants.DB_MSGS.SUCCESS && it.code != Constants.API_MSGS.SUCCESS) {
+                showSnackBar(
+                    resources.getString(Resources.getErrorMessageByStatusMessage(it))
+                        .replace("{{id}}", it.item.toString())
+                )
+            }
+        }
     }
 
     private fun configureVarietyDropdown(varietyList: List<VarietyEntity>) {
@@ -281,6 +291,15 @@ class PokemonFragment : Fragment() {
         else {
             binding.pokemonImage.setImageBitmap(pokemonViewModel.getImgFemale.value)
         }
+    }
+
+    private fun showSnackBar(text: String) {
+        val snack = Snackbar.make(binding.pokemonFragment, text, Snackbar.LENGTH_SHORT)
+        snack.setBackgroundTint(resources.getColor(R.color.red, null))
+        snack.setTextColor(Color.WHITE)
+        snack.setTextMaxLines(2)
+
+        snack.show()
     }
 
     override fun onDestroyView() {

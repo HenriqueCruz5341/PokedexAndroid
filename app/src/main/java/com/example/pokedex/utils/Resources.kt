@@ -1,5 +1,6 @@
 package com.example.pokedex.utils
 
+import android.util.Log
 import com.example.pokedex.R
 
 class Resources {
@@ -49,6 +50,88 @@ class Resources {
                 "steel" -> R.string.steel
                 "fairy" -> R.string.fairy
                 else -> R.string.unknown
+            }
+        }
+
+        fun getErrorMessageByStatusMessage(statusMessage: StatusMessage): Int {
+            when (statusMessage.resource){
+                Constants.RES_MSGS.POKEMON -> {
+                    return when (statusMessage.code){
+                        Constants.API_MSGS.FAIL -> R.string.error_loading_pokemons
+                        Constants.API_MSGS.NOT_FOUND -> R.string.error_not_found_pokemon
+                        Constants.DB_MSGS.CONSTRAINT -> R.string.error_saving_pokemon
+                        Constants.DB_MSGS.NOT_FOUND -> R.string.error_not_found_pokemon
+                        Constants.DB_MSGS.FAIL -> R.string.error_db
+                        else -> R.string.error_unmapped
+                    }
+                }
+                Constants.RES_MSGS.TYPE -> {
+                    return when (statusMessage.code){
+                        Constants.DB_MSGS.NOT_FOUND -> R.string.error_not_found_types
+                        Constants.DB_MSGS.CONSTRAINT -> R.string.error_saving_types
+                        Constants.DB_MSGS.FAIL -> R.string.error_db
+                        else -> R.string.error_unmapped
+                    }
+                }
+                Constants.RES_MSGS.TYPE_REL -> {
+                    return when (statusMessage.code){
+                        Constants.DB_MSGS.NOT_FOUND -> R.string.error_not_found_type_relations
+                        Constants.DB_MSGS.CONSTRAINT -> R.string.error_saving_type_relations
+                        Constants.DB_MSGS.FAIL -> R.string.error_db
+                        else -> R.string.error_unmapped
+                    }
+                }
+                Constants.RES_MSGS.SPECIE -> {
+                    return when (statusMessage.code){
+                        Constants.API_MSGS.NOT_FOUND -> R.string.error_not_found_specie
+                        Constants.API_MSGS.FAIL -> R.string.error_loading_species
+                        Constants.DB_MSGS.CONSTRAINT -> R.string.error_saving_specie
+                        Constants.DB_MSGS.NOT_FOUND -> R.string.error_not_found_specie
+                        Constants.DB_MSGS.FAIL -> R.string.error_db
+                        else -> R.string.error_unmapped
+                    }
+                }
+                Constants.RES_MSGS.EVOLUTION -> {
+                    return when (statusMessage.code){
+                        Constants.API_MSGS.NOT_FOUND -> R.string.error_not_found_evolution
+                        Constants.API_MSGS.FAIL -> R.string.error_loading_evolutions
+                        Constants.DB_MSGS.CONSTRAINT -> R.string.error_saving_evolution
+                        Constants.DB_MSGS.NOT_FOUND -> R.string.error_not_found_evolution
+                        Constants.DB_MSGS.FAIL -> R.string.error_db
+                        else -> R.string.error_unmapped
+                    }
+                }
+                Constants.RES_MSGS.REGION -> {
+                    return when (statusMessage.code){
+                        Constants.API_MSGS.NOT_FOUND -> R.string.error_not_found_region
+                        Constants.API_MSGS.FAIL -> R.string.error_loading_regions
+                        Constants.DB_MSGS.CONSTRAINT -> R.string.error_saving_region
+                        Constants.DB_MSGS.NOT_FOUND -> R.string.error_not_found_region
+                        Constants.DB_MSGS.FAIL -> R.string.error_db
+                        else -> R.string.error_unmapped
+                    }
+                }
+                Constants.RES_MSGS.LOCATION -> {
+                    return when (statusMessage.code){
+                        Constants.API_MSGS.NOT_FOUND -> R.string.error_not_found_location
+                        Constants.API_MSGS.FAIL -> R.string.error_loading_locations
+                        Constants.DB_MSGS.CONSTRAINT -> R.string.error_saving_location
+                        Constants.DB_MSGS.NOT_FOUND -> R.string.error_not_found_location
+                        Constants.DB_MSGS.FAIL -> R.string.error_db
+                        else -> R.string.error_unmapped
+                    }
+                }
+                Constants.RES_MSGS.AREA -> {
+                    return when (statusMessage.code){
+                        Constants.API_MSGS.NOT_FOUND -> R.string.error_not_found_area
+                        Constants.API_MSGS.FAIL -> R.string.error_loading_areas
+                        Constants.DB_MSGS.CONSTRAINT -> R.string.error_saving_area
+                        Constants.DB_MSGS.NOT_FOUND -> R.string.error_not_found_area
+                        Constants.DB_MSGS.FAIL -> R.string.error_db
+                        else -> R.string.error_unmapped
+                    }
+                }
+                else -> return R.string.error_unmapped
             }
         }
     }

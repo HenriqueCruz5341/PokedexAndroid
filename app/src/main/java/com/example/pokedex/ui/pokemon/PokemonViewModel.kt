@@ -19,6 +19,7 @@ import com.example.pokedex.repository.database.model.VarietyEntity
 import com.example.pokedex.utils.Constants
 import com.example.pokedex.utils.Converter
 import com.example.pokedex.utils.ImageURL
+import com.example.pokedex.utils.StatusMessage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,6 +35,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     private var customEvolutionList = MutableLiveData<List<EvolutionEntity>>()
     private var varietyList = MutableLiveData<List<VarietyEntity>>()
     private var typeRelationList = MutableLiveData<List<TypeMultiplierDTO>>()
+    private var statusMessage = MutableLiveData<StatusMessage>()
 
     private var pokemonDto: PokemonDto = PokemonDto()
     private var pokemonSpecieDto: PokemonSpecieDto = PokemonSpecieDto()
@@ -49,6 +51,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     val getCustomEvolutionList: MutableLiveData<List<EvolutionEntity>> get() = customEvolutionList
     val getVarietyList: MutableLiveData<List<VarietyEntity>> get() = varietyList
     val getTypeRelationList: MutableLiveData<List<TypeMultiplierDTO>> get() = typeRelationList
+    val getStatusMessage : MutableLiveData<StatusMessage> get() = statusMessage
 
     fun loadPokemon(pokemonId: Int) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
@@ -62,10 +65,13 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                     pokemonDto = response.body() as PokemonDto
                     val specieId = Converter.idFromUrl(pokemonDto.species.url)
                     requestPokemonSpecie(specieId)
+                } else {
+                    statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.NOT_FOUND)
                 }
             }
 
             override fun onFailure(call: Call<PokemonDto>, t: Throwable) {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.FAIL)
                 requestPokemonDatabase(pokemonId)
             }
         })
@@ -82,6 +88,8 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
             varietyList.value = varietyDAO.getByPokemonId(pokemonId).filterNotNull()
             val evolutions = evolutionDAO.getChainByPokemonId(pokemonId).filterNotNull()
             loadCustomEvolutionList(evolutions.toMutableList())
+        } else {
+            statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.NOT_FOUND)
         }
     }
 
@@ -97,10 +105,13 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                     pokemonSpecieDto = response.body() as PokemonSpecieDto
                     val evolutionId = Converter.idFromUrl(pokemonSpecieDto.evolutionChain.url)
                     requestEvolutionChain(evolutionId)
+                } else {
+                    statusMessage.value = StatusMessage(Constants.RES_MSGS.SPECIE, Constants.API_MSGS.NOT_FOUND)
                 }
             }
-            //TODO: Handle error
             override fun onFailure(call: Call<PokemonSpecieDto>, t: Throwable) {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.SPECIE, Constants.API_MSGS.FAIL)
+                requestPokemonDatabase(Converter.idFromUrl(pokemonDto.species.url))
             }
         })
     }
@@ -128,10 +139,13 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                 if(response.body() != null) {
                     evolutionChainDto = response.body() as EvolutionChainDto
                     savePokemon()
+                } else {
+                    statusMessage.value = StatusMessage(Constants.RES_MSGS.EVOLUTION, Constants.API_MSGS.NOT_FOUND)
                 }
             }
             override fun onFailure(call: Call<EvolutionChainDto>, t: Throwable) {
-                TODO("Not yet implemented")
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.EVOLUTION, Constants.API_MSGS.FAIL)
+                requestPokemonDatabase(Converter.idFromUrl(pokemonDto.species.url))
             }
 
         })
@@ -152,7 +166,6 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
 
     private fun savePokemon() {
         val db = ClientDatabase.getDatabase(getApplication()).PokemonDAO()
-        var msg = 0
 
         try {
             val pokemonEntity = PokemonEntity().apply {
@@ -181,27 +194,27 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                 db.update(pokemonEntity)
 
             pokemon.value = pokemonEntity
+            statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.API_MSGS.SUCCESS)
             loadImages(pokemonEntity)
 
             saveVarieties()
             saveEvolutions()
 
         } catch (e: SQLiteConstraintException){
-            msg = Constants.BD_MSGS.CONSTRAINT
+            statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.CONSTRAINT)
         } catch (e: Exception) {
-            msg = Constants.BD_MSGS.FAIL
+            statusMessage.value = StatusMessage(Constants.RES_MSGS.POKEMON, Constants.DB_MSGS.FAIL)
         }
     }
 
     private fun saveVarieties(){
         val varietyDAO = ClientDatabase.getDatabase(getApplication()).VarietyDAO()
         val list = mutableListOf<VarietyEntity>()
-        var msg = 0
 
-        try {
-            val varieties = pokemonSpecieDto.varieties
-            varieties.forEach {
-                val varietyId = Converter.idFromUrl(it.pokemon.url)
+        val varieties = pokemonSpecieDto.varieties
+        varieties.forEach {
+            val varietyId = Converter.idFromUrl(it.pokemon.url)
+            try {
                 val variety = VarietyEntity().apply {
                     id = varietyId
                     pokemonId = pokemonSpecieDto.id
@@ -216,48 +229,47 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
                     varietyDAO.update(variety)
 
                 list.add(variety)
+            } catch (e: SQLiteConstraintException){
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.SPECIE, Constants.DB_MSGS.CONSTRAINT, varietyId)
+            } catch (e: Exception) {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.SPECIE, Constants.DB_MSGS.FAIL)
             }
-
-
-            varietyList.value = list
-        } catch (e: SQLiteConstraintException){
-            msg = Constants.BD_MSGS.CONSTRAINT
-        } catch (e: Exception) {
-            msg = Constants.BD_MSGS.FAIL
         }
+
+        varietyList.value = list
+        statusMessage.value = StatusMessage(Constants.RES_MSGS.SPECIE, Constants.API_MSGS.SUCCESS)
     }
 
     private fun saveEvolutions() {
         val evolutionDAO = ClientDatabase.getDatabase(getApplication()).EvolutionDAO()
-        var msg = 0
+        val firstEvolutionId = Converter.idFromUrl(evolutionChainDto.chain.species.url)
+        val firstEvolution = EvolutionEntity().apply {
+            id = firstEvolutionId
+            chain = evolutionChainDto.id
+            order = 0
+            pokemonName = Converter.beautifyName(evolutionChainDto.chain.species.name)
+            pokemonImage = Converter.urlImageFromId(firstEvolutionId)
+        }
+        val evolutions = mutableListOf(firstEvolution)
+        evolutions.addAll(linearizeEvolutionChain(evolutionChainDto.chain.evolvesTo, 1))
 
-        try {
-            val firstEvolutionId = Converter.idFromUrl(evolutionChainDto.chain.species.url)
-            val firstEvolution = EvolutionEntity().apply {
-                id = firstEvolutionId
-                chain = evolutionChainDto.id
-                order = 0
-                pokemonName = Converter.beautifyName(evolutionChainDto.chain.species.name)
-                pokemonImage = Converter.urlImageFromId(firstEvolutionId)
-            }
-            val evolutions = mutableListOf(firstEvolution)
-            evolutions.addAll(linearizeEvolutionChain(evolutionChainDto.chain.evolvesTo, 1))
-
-            evolutions.forEach {
+        evolutions.forEach {
+            try {
                 val evolutionExists = evolutionDAO.getById(it.id)
-                if(evolutionExists == null)
+                if (evolutionExists == null)
                     evolutionDAO.insert(it)
                 else
                     evolutionDAO.update(it)
+
+            } catch (e: SQLiteConstraintException) {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.EVOLUTION, Constants.DB_MSGS.CONSTRAINT, it.id)
+            } catch (e: Exception) {
+                statusMessage.value = StatusMessage(Constants.RES_MSGS.EVOLUTION, Constants.DB_MSGS.FAIL)
             }
-
-            loadCustomEvolutionList(evolutions)
-
-        } catch (e: SQLiteConstraintException){
-            msg = Constants.BD_MSGS.CONSTRAINT
-        } catch (e: Exception) {
-            msg = Constants.BD_MSGS.FAIL
         }
+
+        statusMessage.value = StatusMessage(Constants.RES_MSGS.EVOLUTION, Constants.API_MSGS.SUCCESS)
+        loadCustomEvolutionList(evolutions)
     }
 
     private fun loadCustomEvolutionList(evolutions: MutableList<EvolutionEntity>) {

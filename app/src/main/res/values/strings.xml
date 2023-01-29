@@ -66,4 +66,38 @@
     <string name="dark">Dark</string>
     <string name="fairy">Fairy</string>
     <string name="unknown">Unknown</string>
+    <!-- Strings used for feedback messages -->
+    <string name="error_loading_pokemon">Error while loading pokemon {{id}} from API. Loading from local database.</string>
+    <string name="error_loading_pokemons">Error while loading pokemons from API. Loading from local database.</string>
+    <string name="error_loading_species">Error while loading species from API. Loading from local database.</string>
+    <string name="error_loading_evolutions">Error while loading evolutions from API. Loading from local database.</string>
+    <string name="error_loading_regions">Error while loading regions from API. Loading from local database.</string>
+    <string name="error_loading_locations">Error while loading locations from API. Loading from local database.</string>
+    <string name="error_loading_areas">Error while loading areas from API. Loading from local database.</string>
+
+
+    <string name="error_not_found_pokemon">Any pokemon found.</string>
+    <string name="error_not_found_types">Any type found.</string>
+    <string name="error_not_found_type_relations">Any type relation found.</string>
+    <string name="error_not_found_specie">Any specie found.</string>
+    <string name="error_not_found_evolution">Any evolution found.</string>
+    <string name="error_not_found_region">Any region found.</string>
+    <string name="error_not_found_location">Any location found.</string>
+    <string name="error_not_found_area">Any area found.</string>
+
+    <string name="error_saving_pokemon">Error while saving pokemon {{id}}.</string>
+    <string name="error_saving_types">Error while saving types.</string>
+    <string name="error_saving_type_relations">Error while saving type relations.</string>
+    <string name="error_saving_specie">Error while saving specie {{id}}.</string>
+    <string name="error_saving_evolution">Error while saving evolution {{id}}.</string>
+    <string name="error_saving_region">Error while saving region {{id}}.</string>
+    <string name="error_saving_location">Error while saving location {{id}}.</string>
+    <string name="error_saving_area">Error while saving area {{id}}.</string>
+
+    <string name="error_db">Error while accessing database.</string>
+    <string name="error_api">Error while accessing API.</string>
+    <string name="error_unmapped">Unmapped Error.</string>
+
+
+
 </resources>

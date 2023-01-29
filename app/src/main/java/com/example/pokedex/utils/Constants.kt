@@ -12,11 +12,28 @@ class Constants {
         val BD_NAME = "pokedex.db"
     }
 
-    object BD_MSGS {
-        val SUCCESS = 1
-        val FAIL = 0
+    object DB_MSGS {
+        val SUCCESS = 0
+        val FAIL = 1
         val CONSTRAINT = 2
         val NOT_FOUND = 3
+    }
+
+    object API_MSGS {
+        val SUCCESS = 4
+        val FAIL = 5
+        val NOT_FOUND = 6
+    }
+
+    object RES_MSGS {
+        val POKEMON = 0
+        val TYPE = 1
+        val TYPE_REL = 2
+        val SPECIE = 3
+        val EVOLUTION = 4
+        val REGION = 5
+        val LOCATION = 6
+        val AREA = 7
     }
 
     object TYPES {

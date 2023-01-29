@@ -33,4 +33,34 @@
     <string name="dark">Sombrio</string>
     <string name="fairy">Fada</string>
     <string name="unknown">Desconhecido</string>
+    <!-- Strings used for feedback messages -->
+    <string name="error_loading_pokemon">Erro ao carregar o pokemon {{id}} da API. Buscando na base de dados local.</string>
+    <string name="error_loading_pokemons">Erro ao carregar pokemons da API. Buscando na base de dados local.</string>
+    <string name="error_loading_species">Erro ao carregar espécies da API. Buscando na base de dados local.</string>
+    <string name="error_loading_evolutions">Erro ao carregar evoluções da API. Buscando na base de dados local.</string>
+    <string name="error_loading_regions">Erro ao carregar regiões da API. Buscando na base de dados local.</string>
+    <string name="error_loading_locations">Erro ao carregar localizações da API. Buscando na base de dados local.</string>
+    <string name="error_loading_areas">Erro ao carregar áreas da API. Buscando na base de dados local.</string>
+
+    <string name="error_not_found_pokemon">Nenhum pokemon encontrado.</string>
+    <string name="error_not_found_types">Nenhum tipo encontrado.</string>
+    <string name="error_not_found_type_relations">Nenhuma relação de tipo encontrada.</string>
+    <string name="error_not_found_specie">Nenhuma espécie encontrada.</string>
+    <string name="error_not_found_evolution">Nenhuma evolução encontrada.</string>
+    <string name="error_not_found_region">Nenhuma região encontrada.</string>
+    <string name="error_not_found_location">Nenhuma localização encontrada.</string>
+    <string name="error_not_found_area">Nenhuma área encontrada.</string>
+
+    <string name="error_saving_pokemon">Erro ao salvar o pokemon {{id}}.</string>
+    <string name="error_saving_types">Erro ao salvar os tipos.</string>
+    <string name="error_saving_type_relations">Erro ao salvar as relações de tipo.</string>
+    <string name="error_saving_specie">Erro ao salvar a espécie {{id}}.</string>
+    <string name="error_saving_evolution">Erro ao salvar a evolução {{id}}.</string>
+    <string name="error_saving_region">Erro ao salvar a região {{id}}.</string>
+    <string name="error_saving_location">Erro ao salvar a localização {{id}}.</string>
+    <string name="error_saving_area">Erro ao salvar a área {{id}}.</string>
+
+    <string name="error_db">Erro ao acessar o banco de dados.</string>
+    <string name="error_api">Erro ao acessar a API.</string>
+    <string name="error_unmapped">Erro não mapeado.</string>
 </resources>

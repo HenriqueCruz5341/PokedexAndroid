@@ -46,13 +46,13 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         try {
             val resp = db.getAll()
             if (resp.isEmpty()) {
-                listMsg.value = Constants.BD_MSGS.NOT_FOUND
+                listMsg.value = Constants.DB_MSGS.NOT_FOUND
             } else {
-                listMsg.value = Constants.BD_MSGS.SUCCESS
+                listMsg.value = Constants.DB_MSGS.SUCCESS
                 typeList.value = resp
             }
         } catch (e: Exception) {
-            listMsg.value = Constants.BD_MSGS.FAIL
+            listMsg.value = Constants.DB_MSGS.FAIL
         }
     }
 
@@ -84,9 +84,9 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             if (selectedTypes.size == 2) attackSecondType = typeFunctionFirst.invoke(selectedTypes[1].id)
             var resp: MutableList<TypeMultiplierDTO> = mutableListOf()
             if (attack.isEmpty()) {
-                listMsg.value = Constants.BD_MSGS.NOT_FOUND
+                listMsg.value = Constants.DB_MSGS.NOT_FOUND
             } else {
-                listMsg.value = Constants.BD_MSGS.SUCCESS
+                listMsg.value = Constants.DB_MSGS.SUCCESS
                 attack.forEach {
                     val type = typeFunctionSecond.invoke(it)
                     if (type != null)
@@ -107,7 +107,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 listToChange.value = resp.toList()
             }
         } catch (e: Exception) {
-            listMsg.value = Constants.BD_MSGS.FAIL
+            listMsg.value = Constants.DB_MSGS.FAIL
         }
     }
 
