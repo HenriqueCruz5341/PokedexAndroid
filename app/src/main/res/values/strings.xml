@@ -8,12 +8,14 @@
     <string name="title_activity_splash_screen" translatable="false">SplashScreenActivity</string>
     <string name="title_activity_main" translatable="false">MainActivity</string>
     <string name="pokemon_image" translatable="false">PokemonImage</string>
+    <string name="pokemon_number" translatable="false">0000</string>
     <string name="pokemon_name" translatable="false">PokemonName</string>
     <string name="type_name" translatable="false">TypeName</string>
     <string name="shine_image" translatable="false">Shine</string>
     <string name="back_image" translatable="false">Back</string>
     <string name="next_image" translatable="false">Next</string>
     <string name="male_image" translatable="false">Male</string>
+    <string name="search_button_image" translatable="false">SearchButtonImage</string>
     <string name="female_image" translatable="false">Female</string>
     <string name="pokemon_variant" translatable="false">PokemonVariant</string>
     <string name="pokemon_description" translatable="false">PokemonDescription</string>
@@ -34,7 +36,7 @@
 
     <!-- Strings that user can visualize -->
     <string name="text_weakness">Weakness</string>
-    <string name="search_pokemon_hint">Search by name</string>
+    <string name="search_pokemon_hint">Search by name or id</string>
     <string name="hp_status">HP: </string>
     <string name="atk_status">Attack: </string>
     <string name="def_status">Defense: </string>
@@ -42,6 +44,8 @@
     <string name="sp_def_status">Sp. Def: </string>
     <string name="speed_status">Speed: </string>
     <string name="value_status">000</string>
+    <string name="evolution_line">Evolution Line</string>
+    <string name="weakness_and_resistances">Weakness and Resistances</string>
     <!-- Strings used for pokemon types -->
     <string name="normal">Normal</string>
     <string name="fighting">Fighting</string>

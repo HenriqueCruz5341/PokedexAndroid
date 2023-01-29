@@ -3,7 +3,6 @@ package com.example.pokedex.ui.home
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +24,7 @@ class HomeFragment : Fragment() {
     private val pokemonsAdapter = ListPokemonAdapter()
     private val offsetStart: Int = 0
     private var isLoading: Boolean = true
+    private var isFiltered: Boolean = false
     private var isLastOffset: Boolean = false
     private var lastOffset: Int = offsetStart
     private var currentOffset: Int = offsetStart
@@ -40,11 +40,36 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        configureListeners()
+
         initRecyclerListPokemons()
 
         setObserver()
 
         return root
+    }
+
+    private fun configureListeners() {
+        binding.searchButton.setOnClickListener {
+            if (binding.searchInput.text.isNotEmpty()) {
+                isFiltered = true
+                pokemonsAdapter.removeLoadingFooter()
+                homeViewModel.searchPokemons(binding.searchInput.text.toString())
+            } else if (isFiltered) {
+                isFiltered = false
+
+                pokemonsAdapter.setItems(homeViewModel.getPokemonList.value!!)
+
+                if (currentOffset != lastOffset) {
+                    isLoading = false
+                    pokemonsAdapter.addLoadingFooter()
+                    currentOffset += limit
+                    loadNextPage()
+                } else {
+                    isLastOffset = true
+                }
+            }
+        }
     }
 
     private fun initRecyclerListPokemons() {
@@ -63,12 +88,14 @@ class HomeFragment : Fragment() {
 
         binding.recyclerListPokemons.addOnScrollListener(object : PaginationScrollListener(binding.recyclerListPokemons.layoutManager as GridLayoutManager) {
             override fun loadMoreItems() {
-                isLoading = false
-                currentOffset += limit
+                if(!isFiltered) {
+                    isLoading = false
+                    currentOffset += limit
 
-                Handler(Looper.myLooper()!!).postDelayed({
-                    loadNextPage()
-                }, 1000)
+                    Handler(Looper.myLooper()!!).postDelayed({
+                        loadNextPage()
+                    }, 1000)
+                }
             }
 
             override fun getLastOffset(): Int {
@@ -91,7 +118,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setObserver() {
-        homeViewModel.getPokemonList().observe(viewLifecycleOwner) {
+        homeViewModel.getPokemonList.observe(viewLifecycleOwner) {
+            if (isFiltered) return@observe
             if (!isLoading) pokemonsAdapter.removeLoadingFooter()
 
             lastOffset = it[0].count / limit * limit
@@ -105,7 +133,17 @@ class HomeFragment : Fragment() {
                 isLastOffset = true
             }
         }
+        homeViewModel.getFilteredPokemonList.observe(viewLifecycleOwner) {
+            if (binding.searchInput.text.isEmpty()) {
+                isFiltered = false
+                loadNextPage()
+            } else {
+                isFiltered = true
+                pokemonsAdapter.setItems(it)
+            }
+        }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

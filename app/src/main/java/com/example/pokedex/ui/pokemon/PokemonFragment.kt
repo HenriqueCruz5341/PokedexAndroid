@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPokemonBinding
@@ -20,7 +21,9 @@ import com.example.pokedex.repository.database.model.PokemonEntity
 import com.example.pokedex.repository.database.model.VarietyEntity
 import com.example.pokedex.ui.recycleView.evolution.ListEvolutionAdapter
 import com.example.pokedex.ui.recycleView.evolution.OnEvolutionListener
+import com.example.pokedex.ui.recycleView.typeRelations.ListTypeRelationAdapter
 import com.example.pokedex.utils.Constants
+import com.example.pokedex.utils.Converter
 import com.example.pokedex.utils.Resources
 
 
@@ -30,6 +33,7 @@ class PokemonFragment : Fragment() {
     private lateinit var pokemonViewModel: PokemonViewModel
     private val args: PokemonFragmentArgs by navArgs()
     private val evolutionAdapter = ListEvolutionAdapter()
+    private val typeRelationAdapter = ListTypeRelationAdapter()
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -43,6 +47,8 @@ class PokemonFragment : Fragment() {
         val root: View = binding.root
 
         initRecyclerListEvolutions()
+
+        initRecyclerWeaknessAndResistances()
 
         configureListeners()
 
@@ -77,6 +83,11 @@ class PokemonFragment : Fragment() {
         evolutionAdapter.setListener(listener)
     }
 
+    private fun initRecyclerWeaknessAndResistances() {
+        binding.recyclerListWeakness.layoutManager = GridLayoutManager(context, 3)
+        binding.recyclerListWeakness.adapter = typeRelationAdapter
+    }
+
     private fun configureListeners() {
         binding.shinyButton.setOnClickListener {
             pokemonViewModel.setShinyButtonToggle()
@@ -98,6 +109,7 @@ class PokemonFragment : Fragment() {
             configurePokemonTypes(it)
             configurePokemonStats(it)
             configurePokemonGender(it)
+            pokemonViewModel.configureTypeRelationList(it.typeOne, it.typeTwo)
         }
         pokemonViewModel.getImgDefault.observe(viewLifecycleOwner) {
             binding.pokemonImage.setImageBitmap(it)
@@ -127,6 +139,25 @@ class PokemonFragment : Fragment() {
         }
         pokemonViewModel.getImgShinyFemale.observe(viewLifecycleOwner) {
             configurePokemonImage(pokemonViewModel.getShinyButton.value!!, pokemonViewModel.getGenderButtons.value!!)
+        }
+        pokemonViewModel.getTypeRelationList.observe(viewLifecycleOwner) { it ->
+            val typeColors: MutableList<Int> = mutableListOf()
+            val typeStrings: MutableList<String> = mutableListOf()
+            it.forEach {
+                typeColors.add(
+                    resources.getColor(
+                        Resources.getColorByName(it.name), null
+                    )
+                )
+                typeStrings.add(
+                    resources.getString(
+                        Resources.getStringByName(it.name)
+                    )
+                )
+            }
+            typeRelationAdapter.updateColorsList(typeColors.toList())
+            typeRelationAdapter.updateNamesList(typeStrings.toList())
+            typeRelationAdapter.updateTypeList(it)
         }
     }
 
@@ -165,7 +196,7 @@ class PokemonFragment : Fragment() {
     }
 
     private fun configurePokemonTypes(pokemonEntity: PokemonEntity){
-        binding.pokemonName.text = pokemonEntity.name.replaceFirstChar { it.uppercase() }
+        binding.pokemonNumber.text = Converter.idFromUrl(pokemonEntity.speciesUrl).toString().padStart(4, '0')
         binding.pokemonType1.text = resources.getString(Resources.getStringByName(pokemonEntity.typeOne))
         binding.pokemonType1.setBackgroundColor(resources.getColor(Resources.getColorByName(pokemonEntity.typeOne), null))
         if (pokemonEntity.typeTwo != null) {

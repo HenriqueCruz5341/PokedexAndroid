@@ -1,6 +1,5 @@
 package com.example.pokedex.ui.recycleView.pokemon
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -49,10 +48,19 @@ class ListPokemonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         return if (pokemonList[position].id > 0) item else pokemonList[position].id
     }
 
-    fun addAll(pokemons: MutableList<PokemonPageableEntity>) {
+    fun addAll(pokemons: List<PokemonPageableEntity>) {
         if (pokemonList.isNotEmpty() && pokemons[0].id < pokemonList[pokemonList.size-3].id) return
 
         for(pokemon in pokemons){
+            add(pokemon)
+        }
+    }
+
+    fun setItems(pokemons: List<PokemonPageableEntity>) {
+        val size = pokemonList.size
+        pokemonList.clear()
+        notifyItemRangeRemoved(0, size)
+        for (pokemon in pokemons) {
             add(pokemon)
         }
     }

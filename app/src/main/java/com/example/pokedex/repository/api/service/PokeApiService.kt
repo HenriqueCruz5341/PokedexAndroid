@@ -18,7 +18,7 @@ interface PokeApiService {
     fun getPokemonPageable(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<PageableDto>
 
     @GET("pokemon/{name}")
-    fun getPokemonByName(@Path("name") name: String): Call<PokemonDto>
+    fun getPokemonByNameOrId(@Path("name") name: String): Call<PokemonDto>
 
     @GET("pokemon/{id}")
     fun getPokemonById(@Path("id") id: Int): Call<PokemonDto>

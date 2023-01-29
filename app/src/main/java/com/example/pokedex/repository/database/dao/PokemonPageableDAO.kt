@@ -24,4 +24,7 @@ interface PokemonPageableDAO {
     @Query("SELECT * FROM PokemonPageable WHERE id = :id")
     fun getById(id: Int): PokemonPageableEntity?
 
+    @Query("SELECT * FROM PokemonPageable WHERE name like :name")
+    fun getByName(name: String): List<PokemonPageableEntity?>
+
 }

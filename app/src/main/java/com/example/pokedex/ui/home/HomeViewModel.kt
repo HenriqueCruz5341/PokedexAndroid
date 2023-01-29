@@ -2,12 +2,13 @@ package com.example.pokedex.ui.home
 
 import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableDto
+import com.example.pokedex.repository.api.model.PageableItemDto
+import com.example.pokedex.repository.api.model.pokemon.PokemonDto
 import com.example.pokedex.repository.api.service.PokeApiService
 import com.example.pokedex.repository.database.client.ClientDatabase
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
@@ -19,18 +20,15 @@ import retrofit2.Response
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private var listMsg = MutableLiveData<Int>()
-    private var pokemonList = MutableLiveData<MutableList<PokemonPageableEntity>>()
+    private var pokemonList = MutableLiveData<List<PokemonPageableEntity>>()
+    private var filteredPokemonList = MutableLiveData<List<PokemonPageableEntity>>()
     private var newPokemonList = mutableListOf<PokemonPageableEntity>()
     private var lastOffset = 0
     private var lastLimit = 0
 
-    fun getListMsg(): LiveData<Int> {
-        return listMsg
-    }
-
-    fun getPokemonList(): LiveData<MutableList<PokemonPageableEntity>> {
-        return pokemonList
-    }
+    val getListMsg: LiveData<Int> get() = listMsg
+    val getPokemonList: MutableLiveData<List<PokemonPageableEntity>> get() = pokemonList
+    val getFilteredPokemonList: MutableLiveData<List<PokemonPageableEntity>> get() = filteredPokemonList
 
     fun loadPokemons(offset: Int, limit: Int) {
         if(lastLimit == limit && lastOffset == offset) return
@@ -57,6 +55,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 response: Response<PageableDto>,
             ) {
                 savePokemons(response.body()!!)
+                pokemonList.value = newPokemonList
             }
 
             override fun onFailure(call: Call<PageableDto>, t: Throwable) {
@@ -113,8 +112,69 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
+    }
 
-        pokemonList.value = newPokemonList
+    fun searchPokemons(searchText: String){
+        var nameOrId = searchText.lowercase().replace("[^a-z\\d]".toRegex(), "-")
+        nameOrId = if (nameOrId.toIntOrNull() == null) nameOrId else nameOrId.toInt().toString()
+        nameOrId = nameOrId.trim('-')
+
+        if(nameOrId.isEmpty()) {
+            if (!filteredPokemonList.value.isNullOrEmpty())
+                filteredPokemonList.value = listOf()
+            return
+        }
+
+        val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
+        val pokeApi: Call<PokemonDto> = apiPokeService.getPokemonByNameOrId(nameOrId)
+        pokeApi.enqueue(object : Callback<PokemonDto> {
+            override fun onResponse(
+                call: Call<PokemonDto>,
+                response: Response<PokemonDto>,
+            ) {
+                if (response.body() != null) {
+                    val pokemonDto = response.body() as PokemonDto
+
+                    val item = PageableItemDto().apply {
+                        name = Converter.beautifyName(pokemonDto.name)
+                        url = "${Constants.API.BASE_URL_POKEAPI}pokemon/${pokemonDto.id}/"
+                    }
+                    val pageable = PageableDto().apply {
+                        count = 0
+                        next = ""
+                        previous = null
+                        results = listOf(item)
+                    }
+
+                    newPokemonList = mutableListOf()
+                    savePokemons(pageable)
+                    filteredPokemonList.value = newPokemonList
+                }
+            }
+
+            override fun onFailure(call: Call<PokemonDto>, t: Throwable) {
+                searchPokemonsDatabase(searchText)
+            }
+        })
+    }
+
+    private fun searchPokemonsDatabase(searchText: String) {
+        if (searchText.isEmpty()) return
+
+        if (searchText.toIntOrNull() != null) {
+            val pokemon = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO().getById(searchText.toInt())
+            if (pokemon != null) {
+                newPokemonList = mutableListOf()
+                newPokemonList.add(pokemon)
+                filteredPokemonList.value = newPokemonList
+            }
+        } else {
+            val enclosedSearchText = "%$searchText%"
+            val pokemons = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO().getByName(enclosedSearchText)
+            newPokemonList = mutableListOf()
+            newPokemonList.addAll(pokemons.filterNotNull())
+            filteredPokemonList.value = newPokemonList
+        }
     }
 
 }

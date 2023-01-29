@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_weakness">Fraquezas</string>
-    <string name="search_pokemon_hint">Buscar por nome</string>
+    <string name="search_pokemon_hint">Buscar por nome ou id</string>
     <string name="hp_status">PS: </string>
     <string name="atk_status">Ataque: </string>
     <string name="def_status">Defesa: </string>
@@ -11,6 +11,8 @@
     <string name="value_status">000</string>
     <string name="text_defense">Denfensor</string>
     <string name="text_attack">Atacante</string>
+    <string name="weakness_and_resistances">Fraquezas e Resistências</string>
+    <string name="evolution_line">Linha Evolutiva</string>
     <!-- Strings used for pokemon types -->
     <string name="normal">Normal</string>
     <string name="fighting">Lutador</string>

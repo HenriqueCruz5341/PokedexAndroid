@@ -12,6 +12,7 @@ import com.example.pokedex.repository.api.model.pokemon.PokemonDto
 import com.example.pokedex.repository.api.model.pokemonSpecie.PokemonSpecieDto
 import com.example.pokedex.repository.api.service.PokeApiService
 import com.example.pokedex.repository.database.client.ClientDatabase
+import com.example.pokedex.repository.database.dto.TypeMultiplierDTO
 import com.example.pokedex.repository.database.model.EvolutionEntity
 import com.example.pokedex.repository.database.model.PokemonEntity
 import com.example.pokedex.repository.database.model.VarietyEntity
@@ -32,6 +33,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     private var imgShinyFemale = MutableLiveData<Bitmap>()
     private var customEvolutionList = MutableLiveData<List<EvolutionEntity>>()
     private var varietyList = MutableLiveData<List<VarietyEntity>>()
+    private var typeRelationList = MutableLiveData<List<TypeMultiplierDTO>>()
 
     private var pokemonDto: PokemonDto = PokemonDto()
     private var pokemonSpecieDto: PokemonSpecieDto = PokemonSpecieDto()
@@ -46,6 +48,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     val getImgShinyFemale: MutableLiveData<Bitmap> get() = imgShinyFemale
     val getCustomEvolutionList: MutableLiveData<List<EvolutionEntity>> get() = customEvolutionList
     val getVarietyList: MutableLiveData<List<VarietyEntity>> get() = varietyList
+    val getTypeRelationList: MutableLiveData<List<TypeMultiplierDTO>> get() = typeRelationList
 
     fun loadPokemon(pokemonId: Int) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
@@ -75,7 +78,7 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
 
         val pokemonEntity = pokemonDAO.getById(pokemonId)
         if (pokemonEntity != null) {
-            pokemon.value = pokemonEntity ?: PokemonEntity()
+            pokemon.value = pokemonEntity as PokemonEntity
             varietyList.value = varietyDAO.getByPokemonId(pokemonId).filterNotNull()
             val evolutions = evolutionDAO.getChainByPokemonId(pokemonId).filterNotNull()
             loadCustomEvolutionList(evolutions.toMutableList())
@@ -100,6 +103,18 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
             override fun onFailure(call: Call<PokemonSpecieDto>, t: Throwable) {
             }
         })
+    }
+
+    fun configureTypeRelationList(typeOne: String, typeTwo: String?) {
+        val typeRelationDAO = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()
+
+        val typesRelationEntity = typeRelationDAO.getByTypesName(typeOne, typeTwo ?: "")
+
+        this.typeRelationList.value = typesRelationEntity.groupBy { it.attack }.map {
+            TypeMultiplierDTO(
+                it.key,
+                it.value.map { it2 -> it2.damageMultiplier }.reduce { acc, i -> acc * i })
+        }.sortedBy { it.multiplier }
     }
 
     private fun requestEvolutionChain(id: Int){
