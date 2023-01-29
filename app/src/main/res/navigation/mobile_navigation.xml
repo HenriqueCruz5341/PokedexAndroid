@@ -72,6 +72,9 @@
         <argument
             android:name="locationAreaName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_navigation_location_pokemon_to_pokemonFragment"
+            app:destination="@id/pokemonFragment" />
     </fragment>
     <fragment
         android:id="@+id/pokemonFragment"

@@ -7,13 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.FragmentLocationPokemonBinding
-import com.example.pokedex.repository.api.model.PageableItemDto
-import com.example.pokedex.ui.recycleView.region.ListRegionAdapter
-import com.example.pokedex.ui.recycleView.region.OnRegionListener
+import com.example.pokedex.repository.database.model.PokemonPageableEntity
+import com.example.pokedex.ui.recycleView.pokemon.ListPokemonAdapter
+import com.example.pokedex.ui.recycleView.pokemon.OnPokemonListener
+import com.example.pokedex.utils.Converter
 
 class LocationPokemonFragment : Fragment() {
 
@@ -25,7 +27,7 @@ class LocationPokemonFragment : Fragment() {
     private lateinit var locationPokemonViewModel: LocationPokemonViewModel
     private val args: LocationPokemonFragmentArgs by navArgs()
 
-    private var pokemonAdapter: ListRegionAdapter = ListRegionAdapter()
+    private var pokemonAdapter: ListPokemonAdapter = ListPokemonAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,11 +45,10 @@ class LocationPokemonFragment : Fragment() {
         binding.recyclerListLocationPokemon.layoutManager = GridLayoutManager(context, 3, RecyclerView.VERTICAL, false)
         binding.recyclerListLocationPokemon.adapter = pokemonAdapter
 
-        val listener = object : OnRegionListener {
-            override fun onClick(region: PageableItemDto) {
-                // val action =
-                // findNavController().navigate(action)
-                println(region)
+        val listener = object : OnPokemonListener {
+            override fun onClick(pokemon: PokemonPageableEntity) {
+                val action = LocationPokemonFragmentDirections.actionNavigationLocationPokemonToPokemonFragment(pokemon.id)
+                findNavController().navigate(action)
             }
         }
 
@@ -62,8 +63,7 @@ class LocationPokemonFragment : Fragment() {
 
     private fun setObserver() {
         locationPokemonViewModel.getPokemon().observe(viewLifecycleOwner, Observer {
-            pokemonAdapter.updateRegionList(it)
-            println("entrei aqui")
+            pokemonAdapter.setItems(it)
         })
     }
 

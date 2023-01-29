@@ -3,7 +3,7 @@ package com.example.pokedex.utils
 class Converter {
     companion object {
         fun idFromUrl(url: String): Int {
-            val id = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[6]
+            val id = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().last()
             return Integer.parseInt(id)
         }
 
