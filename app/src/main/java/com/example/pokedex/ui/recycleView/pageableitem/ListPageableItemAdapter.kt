@@ -1,27 +1,25 @@
-package com.example.pokedex.ui.recycleView.region
+package com.example.pokedex.ui.recycleView.pageableitem
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.RegionLineBinding
-import com.example.pokedex.databinding.TypeLineBinding
 import com.example.pokedex.repository.api.model.PageableItemDto
-import com.example.pokedex.repository.database.model.TypeEntity
 
-class ListRegionAdapter : RecyclerView.Adapter<ListRegionViewHolder>() {
+class ListPageableItemAdapter : RecyclerView.Adapter<ListPageableItemViewHolder>() {
 
     private var regionList: List<PageableItemDto> = listOf()
-    private lateinit var listener: OnRegionListener
+    private lateinit var listener: OnPageableItemListener
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListRegionViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListPageableItemViewHolder {
         val item = RegionLineBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,false)
-        return ListRegionViewHolder(item, listener)
+        return ListPageableItemViewHolder(item, listener)
     }
 
-    override fun onBindViewHolder(holder: ListRegionViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ListPageableItemViewHolder, position: Int) {
         holder.bindVH(regionList[position])
     }
 
@@ -34,7 +32,7 @@ class ListRegionAdapter : RecyclerView.Adapter<ListRegionViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun setListener(regionListener: OnRegionListener) {
+    fun setListener(regionListener: OnPageableItemListener) {
         listener = regionListener
     }
 }

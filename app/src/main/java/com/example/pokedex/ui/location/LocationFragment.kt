@@ -12,8 +12,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.databinding.FragmentLocationBinding
 import com.example.pokedex.repository.api.model.PageableItemDto
-import com.example.pokedex.ui.recycleView.region.ListRegionAdapter
-import com.example.pokedex.ui.recycleView.region.OnRegionListener
+import com.example.pokedex.ui.recycleView.pageableitem.ListPageableItemAdapter
+import com.example.pokedex.ui.recycleView.pageableitem.OnPageableItemListener
 import com.example.pokedex.utils.Converter
 
 class LocationFragment : Fragment() {
@@ -26,7 +26,7 @@ class LocationFragment : Fragment() {
     private lateinit var locationViewModel: LocationViewModel
     private val args: LocationFragmentArgs by navArgs()
 
-    private var locationAdapter: ListRegionAdapter = ListRegionAdapter()
+    private var locationAdapter: ListPageableItemAdapter = ListPageableItemAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,7 +44,7 @@ class LocationFragment : Fragment() {
         binding.recyclerListLocation.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.recyclerListLocation.adapter = locationAdapter
 
-        val listener = object : OnRegionListener {
+        val listener = object : OnPageableItemListener {
             override fun onClick(region: PageableItemDto) {
                 val action = LocationFragmentDirections
                     .actionNavigationLocationToNavigationLocationArea(

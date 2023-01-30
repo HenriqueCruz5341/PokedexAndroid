@@ -37,7 +37,7 @@ class LocationPokemonViewModel(application: Application) : AndroidViewModel(appl
                         val pokemonId = Converter.idFromUrl(pokemon.url)
                         pokemonPageableList.add(PokemonPageableEntity().apply {
                             id = pokemonId
-                            name = pokemon.name
+                            name = Converter.beautifyName(pokemon.name)
                             image = Converter.urlImageFromId(pokemonId)
                             url = pokemon.url
                             count = 0

@@ -11,8 +11,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.databinding.FragmentNotificationsBinding
 import com.example.pokedex.repository.api.model.PageableItemDto
-import com.example.pokedex.ui.recycleView.region.ListRegionAdapter
-import com.example.pokedex.ui.recycleView.region.OnRegionListener
+import com.example.pokedex.ui.recycleView.pageableitem.ListPageableItemAdapter
+import com.example.pokedex.ui.recycleView.pageableitem.OnPageableItemListener
 import com.example.pokedex.utils.Converter
 
 class NotificationsFragment : Fragment() {
@@ -24,7 +24,7 @@ class NotificationsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var notificationsViewModel: NotificationsViewModel
 
-    private var regionAdapter: ListRegionAdapter = ListRegionAdapter()
+    private var regionAdapter: ListPageableItemAdapter = ListPageableItemAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +40,7 @@ class NotificationsFragment : Fragment() {
         binding.recyclerListRegion.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.recyclerListRegion.adapter = regionAdapter
 
-        val listener = object : OnRegionListener {
+        val listener = object : OnPageableItemListener {
             override fun onClick(region: PageableItemDto) {
                  val action = NotificationsFragmentDirections
                      .actionNavigationNotificationsToNavigationLocation(
