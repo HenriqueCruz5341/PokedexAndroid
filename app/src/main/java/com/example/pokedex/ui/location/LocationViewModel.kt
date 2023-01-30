@@ -7,6 +7,7 @@ import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableItemDto
 import com.example.pokedex.repository.api.model.region.RegionDto
 import com.example.pokedex.repository.api.service.PokeApiService
+import com.example.pokedex.utils.Converter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,9 +15,27 @@ import retrofit2.Response
 class LocationViewModel : ViewModel() {
 
     var locationPageableItemList = MutableLiveData<List<PageableItemDto>>()
+    var filteredPageableItemList = MutableLiveData<List<PageableItemDto>>()
 
     fun getLocations(): LiveData<List<PageableItemDto>> {
         return locationPageableItemList
+    }
+
+    fun getFiltered(): LiveData<List<PageableItemDto>> {
+        return filteredPageableItemList
+    }
+
+    fun removeFilter() {
+        filteredPageableItemList.value = listOf()
+    }
+
+    fun filter(name: String) {
+        val filterAuxList: MutableList<PageableItemDto> = mutableListOf()
+        locationPageableItemList.value!!.forEach {
+            val locationName = Converter.beautifyName(it.name)
+            if(locationName.contains(name, ignoreCase = true)) filterAuxList.add(it)
+        }
+        filteredPageableItemList.value = filterAuxList.toList()
     }
 
     fun loadRegion(id: Int) {

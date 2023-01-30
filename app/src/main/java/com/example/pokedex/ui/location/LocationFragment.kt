@@ -55,6 +55,14 @@ class LocationFragment : Fragment() {
             }
         }
 
+        binding.searchButton.setOnClickListener {
+            if (binding.searchInput.text.isNotEmpty()) {
+                locationViewModel.filter(binding.searchInput.text.toString())
+            } else {
+                locationViewModel.removeFilter()
+            }
+        }
+
         locationAdapter.setListener(listener)
 
         locationViewModel.loadRegion(args.regionId)
@@ -67,6 +75,13 @@ class LocationFragment : Fragment() {
     private fun setObserver() {
         locationViewModel.getLocations().observe(viewLifecycleOwner, Observer {
             locationAdapter.updateRegionList(it)
+        })
+
+        locationViewModel.getFiltered().observe(viewLifecycleOwner, Observer {
+            if(it.isNotEmpty())
+                locationAdapter.updateRegionList(it)
+            else
+                locationAdapter.updateRegionList(locationViewModel.getLocations().value!!)
         })
     }
 
