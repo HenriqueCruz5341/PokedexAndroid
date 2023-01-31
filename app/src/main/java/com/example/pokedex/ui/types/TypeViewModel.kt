@@ -1,4 +1,4 @@
-package com.example.pokedex.ui.dashboard
+package com.example.pokedex.ui.types
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -10,7 +10,7 @@ import com.example.pokedex.repository.database.model.TypeEntity
 import com.example.pokedex.repository.database.model.TypeRelationEntity
 import com.example.pokedex.utils.Constants
 
-class DashboardViewModel(application: Application) : AndroidViewModel(application) {
+class TypeViewModel(application: Application) : AndroidViewModel(application) {
     private var listMsg = MutableLiveData<Int>()
     private var typeList = MutableLiveData<List<TypeEntity>>()
     private var typeDefenseList = MutableLiveData<List<TypeMultiplierDTO>>()

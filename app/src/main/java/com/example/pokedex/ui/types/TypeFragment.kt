@@ -1,25 +1,23 @@
-package com.example.pokedex.ui.dashboard
+package com.example.pokedex.ui.types
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.pokedex.databinding.FragmentDashboardBinding
+import com.example.pokedex.databinding.FragmentTypesBinding
 import com.example.pokedex.repository.database.model.TypeEntity
 import com.example.pokedex.ui.recycleView.typeRelations.ListTypeRelationAdapter
 import com.example.pokedex.ui.recycleView.types.ListTypesAdapter
 import com.example.pokedex.ui.recycleView.types.OnTypeListener
 
-class DashboardFragment : Fragment() {
+class TypeFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
-    private lateinit var dashboardViewModel: DashboardViewModel
+    private var _binding: FragmentTypesBinding? = null
+    private lateinit var typeViewModel: TypeViewModel
     private val typeAdapter = ListTypesAdapter()
     private val typeDefenseAdapter = ListTypeRelationAdapter()
     private val typeAttackAdapter = ListTypeRelationAdapter()
@@ -34,9 +32,9 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        dashboardViewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
+        typeViewModel = ViewModelProvider(this)[TypeViewModel::class.java]
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentTypesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.recyclerListTypes.layoutManager = GridLayoutManager(context, 3)
@@ -50,12 +48,12 @@ class DashboardFragment : Fragment() {
 
         val listener = object : OnTypeListener {
             override fun onClick(type: TypeEntity) {
-                dashboardViewModel.userSelectType(type)
+                typeViewModel.userSelectType(type)
             }
         }
         typeAdapter.setListener(listener)
 
-        dashboardViewModel.getAllTypes()
+        typeViewModel.getAllTypes()
 
         setObserver()
 
@@ -63,7 +61,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setObserver() {
-        dashboardViewModel.getTypeList().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getTypeList().observe(viewLifecycleOwner, Observer {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {
@@ -84,7 +82,7 @@ class DashboardFragment : Fragment() {
 
         })
 
-        dashboardViewModel.getTypeEffectiveness().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getTypeEffectiveness().observe(viewLifecycleOwner, Observer {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {
@@ -104,7 +102,7 @@ class DashboardFragment : Fragment() {
             typeAttackAdapter.updateTypeList(it)
         })
 
-        dashboardViewModel.getTypeWeakness().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getTypeWeakness().observe(viewLifecycleOwner, Observer {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {
@@ -124,7 +122,7 @@ class DashboardFragment : Fragment() {
             typeDefenseAdapter.updateTypeList(it)
         })
 
-        dashboardViewModel.getSelectedTypeList().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getSelectedTypeList().observe(viewLifecycleOwner, Observer {
             if(it.size != 1) {
                 binding.recyclerListAttack.visibility = View.GONE
                 binding.textAttack.visibility = View.GONE
