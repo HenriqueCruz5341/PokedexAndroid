@@ -60,41 +60,39 @@ class TypeFragment : Fragment() {
         return root
     }
 
+    /**
+     * This method set the observers of the TypeViewModel.
+     *
+     * When the one of the lists get changed, it should update the Colors and Name list as well.
+     * When selectedTypes list have one value, Attacker list should be shown, otherwise, it should
+     * be hidden.
+     */
     private fun setObserver() {
         typeViewModel.getTypeList().observe(viewLifecycleOwner, Observer {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
-            it.forEach {
+            it.forEach {it2 ->
                 typeColors.add(
-                    resources.getColor(
-                        com.example.pokedex.utils.Resources.getColorByName(it.name), null
-                    )
+                    getTypeColor(it2.name)
                 )
                 typeStrings.add(
-                    resources.getString(
-                        com.example.pokedex.utils.Resources.getStringByName(it.name)
-                    )
+                    getTranslatedName(it2.name)
                 )
             }
             typeAdapter.updateColors(typeColors.toList())
             typeAdapter.updateNames(typeStrings.toList())
             typeAdapter.updateTypeList(it)
-
         })
 
         typeViewModel.getTypeEffectiveness().observe(viewLifecycleOwner, Observer {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
-            it.forEach {
+            it.forEach {it2 ->
                 typeColors.add(
-                    resources.getColor(
-                        com.example.pokedex.utils.Resources.getColorByName(it.name), null
-                    )
+                    getTypeColor(it2.name)
                 )
                 typeStrings.add(
-                    resources.getString(
-                        com.example.pokedex.utils.Resources.getStringByName(it.name)
-                    )
+                    getTranslatedName(it2.name)
                 )
             }
             typeAttackAdapter.updateColorsList(typeColors.toList())
@@ -105,16 +103,12 @@ class TypeFragment : Fragment() {
         typeViewModel.getTypeWeakness().observe(viewLifecycleOwner, Observer {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
-            it.forEach {
+            it.forEach {it2 ->
                 typeColors.add(
-                    resources.getColor(
-                        com.example.pokedex.utils.Resources.getColorByName(it.name), null
-                    )
+                    getTypeColor(it2.name)
                 )
                 typeStrings.add(
-                    resources.getString(
-                        com.example.pokedex.utils.Resources.getStringByName(it.name)
-                    )
+                    getTranslatedName(it2.name)
                 )
             }
             typeDefenseAdapter.updateColorsList(typeColors.toList())
@@ -132,6 +126,30 @@ class TypeFragment : Fragment() {
             }
             typeAdapter.select(it)
         })
+    }
+
+    /**
+     * This method get Color Int value from resources, based on type name.
+     *
+     * @param name Default type name in english lowercase.
+     * @return integer value of the type color
+     */
+    private fun getTypeColor(name: String): Int {
+        return resources.getColor(
+            com.example.pokedex.utils.Resources.getColorByName(name), null
+        )
+    }
+
+    /**
+     * This method get type translated Name based on default type name.
+     *
+     * @param name Default type name in english lowercase.
+     * @return translated name of the type
+     */
+    private fun getTranslatedName(name: String): String {
+        return resources.getString(
+            com.example.pokedex.utils.Resources.getStringByName(name)
+        )
     }
 
     override fun onDestroyView() {
