@@ -39,7 +39,7 @@ class LocationFragment : Fragment() {
         _binding = FragmentLocationBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.textRegionName.text = args.regionName
+        binding.textRegionName.text = Converter.beautifyName(args.regionName)
 
         binding.recyclerListLocation.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.recyclerListLocation.adapter = locationAdapter

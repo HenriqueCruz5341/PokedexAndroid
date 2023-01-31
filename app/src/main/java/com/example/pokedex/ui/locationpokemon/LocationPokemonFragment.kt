@@ -40,7 +40,7 @@ class LocationPokemonFragment : Fragment() {
         _binding = FragmentLocationPokemonBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.textLocationAreaName.text = args.locationAreaName
+        binding.textLocationAreaName.text = Converter.beautifyName(args.locationAreaName)
 
         binding.recyclerListLocationPokemon.layoutManager = GridLayoutManager(context, 3, RecyclerView.VERTICAL, false)
         binding.recyclerListLocationPokemon.adapter = pokemonAdapter
