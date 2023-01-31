@@ -1,4 +1,4 @@
-package com.example.pokedex.ui.notifications
+package com.example.pokedex.ui.region
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,20 +9,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pokedex.databinding.FragmentNotificationsBinding
+import com.example.pokedex.databinding.FragmentRegionBinding
 import com.example.pokedex.repository.api.model.PageableItemDto
 import com.example.pokedex.ui.recycleView.pageableitem.ListPageableItemAdapter
 import com.example.pokedex.ui.recycleView.pageableitem.OnPageableItemListener
 import com.example.pokedex.utils.Converter
 
-class NotificationsFragment : Fragment() {
+class RegionFragment : Fragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
+    private var _binding: FragmentRegionBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var notificationsViewModel: NotificationsViewModel
+    private lateinit var regionViewModel: RegionViewModel
 
     private var regionAdapter: ListPageableItemAdapter = ListPageableItemAdapter()
 
@@ -31,10 +31,10 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
+        regionViewModel =
+            ViewModelProvider(this).get(RegionViewModel::class.java)
 
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentRegionBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.recyclerListRegion.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -42,7 +42,7 @@ class NotificationsFragment : Fragment() {
 
         val listener = object : OnPageableItemListener {
             override fun onClick(region: PageableItemDto) {
-                 val action = NotificationsFragmentDirections
+                 val action = RegionFragmentDirections
                      .actionNavigationNotificationsToNavigationLocation(
                          Converter.idFromUrl(region.url),
                          region.name
@@ -53,7 +53,7 @@ class NotificationsFragment : Fragment() {
 
         regionAdapter.setListener(listener)
 
-        notificationsViewModel.loadRegions()
+        regionViewModel.loadRegions()
 
         setObserver()
 
@@ -61,7 +61,7 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun setObserver() {
-        notificationsViewModel.getRegions().observe(viewLifecycleOwner, Observer {
+        regionViewModel.getRegions().observe(viewLifecycleOwner, Observer {
             regionAdapter.updateRegionList(it)
         })
     }

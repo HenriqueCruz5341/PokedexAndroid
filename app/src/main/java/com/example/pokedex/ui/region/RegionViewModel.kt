@@ -1,21 +1,18 @@
-package com.example.pokedex.ui.notifications
+package com.example.pokedex.ui.region
 
-import android.graphics.pdf.PdfDocument.Page
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableDto
 import com.example.pokedex.repository.api.model.PageableItemDto
-import com.example.pokedex.repository.api.model.pokemon.PokemonDto
 import com.example.pokedex.repository.api.model.region.RegionDto
 import com.example.pokedex.repository.api.service.PokeApiService
-import com.example.pokedex.utils.Converter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NotificationsViewModel : ViewModel() {
+class RegionViewModel : ViewModel() {
 
     var regionPageableItemList = MutableLiveData<List<PageableItemDto>>()
 
