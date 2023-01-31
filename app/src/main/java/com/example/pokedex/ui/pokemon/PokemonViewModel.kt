@@ -156,7 +156,6 @@ class PokemonViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun setGenderButtons(gender: Int) {
-        // gender_rate, = -1 genderless, = 0 100% male,  = 8 100% female
         when (gender){
             Constants.GENDERS.MALE -> genderButtons.value = gender
             Constants.GENDERS.FEMALE -> genderButtons.value = gender

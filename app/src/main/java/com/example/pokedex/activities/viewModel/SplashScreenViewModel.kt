@@ -18,7 +18,19 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
+/**
+ * Splash Screen View Model
+ *
+ * This class is the view model of the splash screen activity. It is responsible for
+ * requesting the pokemons from the api and save them in the database.
+ * It also reads the pokemon types and relation types from a stringify JSON and save them in the database.
+ *
+ * @property apiMsg The message of the api request.
+ * @property dbMsg The message of the database request.
+ * @constructor Creates a new splash screen view model.
+ * @param application The application of the view model.
+ *
+ */
 class SplashScreenViewModel(application: Application): AndroidViewModel(application) {
 
     private var apiMsg = MutableLiveData<StatusMessage>()
@@ -27,6 +39,9 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
     val getApiMsg : MutableLiveData<StatusMessage> get() = apiMsg
     val getDbMsg : MutableLiveData<StatusMessage> get() = dbMsg
 
+    /**
+     * Request pokemons from the api and save them in the database.
+     */
     fun requestPokemons() {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
         val pokeApi: Call<PageableDto> = apiPokeService.getPokemonPageable(0, 30)
@@ -49,6 +64,11 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         })
     }
 
+    /**
+     * Save pokemons in the database.
+     *
+     * @param pageablePokemons The pokemons to save.
+     */
     private fun savePokemons(pageablePokemons : PageableDto) {
         val db = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO()
         for(pokemon in pageablePokemons.results) {
@@ -78,6 +98,11 @@ class SplashScreenViewModel(application: Application): AndroidViewModel(applicat
         }
     }
 
+    /**
+     * Read pokemon types and relation types from a stringify JSON and save them in the database.
+     *
+     * @see TYPES
+     */
     fun saveTypes() {
         val dbTypes = ClientDatabase.getDatabase(getApplication()).TypeDAO()
         val dbTypesRelation = ClientDatabase.getDatabase(getApplication()).TypeRelationDAO()

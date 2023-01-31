@@ -8,10 +8,6 @@ import com.example.pokedex.utils.ImageURL
 
 class ListEvolutionViewHolder(private val binding: EvolutionLineBinding, private val listener: OnEvolutionListener) : RecyclerView.ViewHolder(binding.root) {
 
-    fun getBinding(): EvolutionLineBinding {
-        return binding
-    }
-
     fun bindVH(evolution: EvolutionEntity) {
         ImageURL.loadImageBitmap(evolution.pokemonImage, object : ImageURL.OnImageLoaded {
             override fun run(value: Bitmap) {

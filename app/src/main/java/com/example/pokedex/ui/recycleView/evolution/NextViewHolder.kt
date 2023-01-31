@@ -4,8 +4,4 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.NextLineBinding
 
 class NextViewHolder(private val binding: NextLineBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    fun getBinding(): NextLineBinding {
-        return binding
-    }
 }

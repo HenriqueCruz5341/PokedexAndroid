@@ -2,16 +2,32 @@ package com.example.pokedex.utils
 
 import org.json.JSONObject
 
+/**
+ * Constants used in the application.
+ *
+ * This class contains all the constants used in the application, with no need to create a new object.
+ * This class is used to avoid the use of magic numbers and strings.
+ *
+ */
 class Constants {
+    /**
+     * This object contains all the constants related to the API.
+     */
     object API {
         val BASE_URL_POKEAPI = "https://pokeapi.co/api/v2/"
         val URL_IMAGES_POKEMON = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{id}}.png"
     }
 
+    /**
+     * This object contains all the constants related to the database.
+     */
     object BD {
         val BD_NAME = "pokedex.db"
     }
 
+    /**
+     * This object contains all the constants related to the database massages.
+     */
     object DB_MSGS {
         val SUCCESS = 0
         val FAIL = 1
@@ -19,12 +35,18 @@ class Constants {
         val NOT_FOUND = 3
     }
 
+    /**
+     * This object contains all the constants related to the API massages.
+     */
     object API_MSGS {
         val SUCCESS = 4
         val FAIL = 5
         val NOT_FOUND = 6
     }
 
+    /**
+     * This object contains all the constants related to resources that application uses.
+     */
     object RES_MSGS {
         val POKEMON = 0
         val TYPE = 1
@@ -36,6 +58,9 @@ class Constants {
         val AREA = 7
     }
 
+    /**
+     * This object contains all the constants related to pokemon types.
+     */
     object TYPES {
         val listTypes: List<String> = listOf("normal", "fighting", "flying", "poison", "ground",
             "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice",
@@ -63,6 +88,9 @@ class Constants {
         var typeJsonArray = JSONObject(typeChartJsonString).getJSONArray("types")
     }
 
+    /**
+     * This object contains all the constants related to pokemons genders.
+     */
     object GENDERS {
         val MALE = 0
         val FEMALE = 1

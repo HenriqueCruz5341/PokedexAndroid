@@ -16,6 +16,17 @@ import com.example.pokedex.utils.Constants
 import com.example.pokedex.utils.Resources
 import com.google.android.material.snackbar.Snackbar
 
+/**
+ * Splash Screen Activity
+ *
+ * This activity is the first activity that the user will see when the app is opened.
+ * It is used to load the data from the API and the database and to show the user a nice animation while
+ * the data are loaded. It also shows a SnackBar if there is an error while loading the data.
+ *
+ * @property _binding The binding of the activity.
+ * @property splashScreenVM The view model of the activity.
+ * @constructor Creates a new splash screen activity.
+ */
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
 
@@ -76,6 +87,11 @@ class SplashScreenActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Shows a SnackBar with the given text.
+     *
+     * @param text The text to be shown.
+     */
     private fun showSnackBar(text: String) {
         val snack = Snackbar.make(binding.splashScreen, text, Snackbar.LENGTH_SHORT)
         snack.setBackgroundTint(resources.getColor(R.color.red, null))

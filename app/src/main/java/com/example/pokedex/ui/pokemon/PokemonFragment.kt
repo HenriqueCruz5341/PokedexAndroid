@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPokemonBinding
+import com.example.pokedex.repository.database.dto.TypeMultiplierDTO
 import com.example.pokedex.repository.database.model.EvolutionEntity
 import com.example.pokedex.repository.database.model.PokemonEntity
 import com.example.pokedex.repository.database.model.VarietyEntity
@@ -29,6 +30,19 @@ import com.example.pokedex.utils.Resources
 import com.google.android.material.snackbar.Snackbar
 
 
+/**
+ * Pokemon Fragment is the fragment that shows the details of a pokemon.
+ *
+ * It shows the name, id, image, types, gender, stats, evolutions and weaknesses and resistances of
+ * the pokemon. It also allows the user to change the variety of the pokemon. And navigate to the
+ * details of the evolutions.
+ *
+ * @property pokemonViewModel the view model of the pokemon fragment
+ * @property args the arguments of the pokemon fragment used to get the pokemon id from the navigation
+ * @property evolutionAdapter the adapter of the recycler view of the evolutions
+ * @property typeRelationAdapter the adapter of the recycler view of the weaknesses and resistances
+ * @property binding the binding of the pokemon fragment
+ */
 class PokemonFragment : Fragment() {
 
     private var _binding: FragmentPokemonBinding? = null
@@ -61,6 +75,15 @@ class PokemonFragment : Fragment() {
         return root
     }
 
+    /**
+     * This method init the recycler view of the evolutions.
+     *
+     * It sets the layout manager and the adapter of the recycler view. It also sets the adapter and
+     * listener to navigate to the details of the evolutions, and the animations of the navigation.
+     * The animations are different depending on the direction of the navigation. If the evolution
+     * is the next one the animation is to the left, if it is the previous one the animation is to
+     * the right. If the evolution is the same as the pokemon the navigation is not done.
+     */
     private fun initRecyclerListEvolutions() {
         binding.recyclerListEvolutions.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerListEvolutions.adapter = evolutionAdapter
@@ -85,11 +108,22 @@ class PokemonFragment : Fragment() {
         evolutionAdapter.setListener(listener)
     }
 
+    /**
+     * This method init the recycler view of the weaknesses and resistances.
+     *
+     * It sets the layout manager and the adapter of the recycler view.
+     */
     private fun initRecyclerWeaknessAndResistances() {
         binding.recyclerListWeakness.layoutManager = GridLayoutManager(context, 3)
         binding.recyclerListWeakness.adapter = typeRelationAdapter
     }
 
+    /**
+     * This method configures the listeners of the buttons of the pokemon fragment.
+     *
+     * It sets listeners to change pokemon sprite, according to the gender and the shiny state. It
+     * also sets a listener to navigate to the home fragment.
+     */
     private fun configureListeners() {
         binding.shinyButton.setOnClickListener {
             pokemonViewModel.setShinyButtonToggle()
@@ -105,7 +139,14 @@ class PokemonFragment : Fragment() {
         }
     }
 
-
+    /**
+     * This method sets all the observers of the pokemon fragment.
+     *
+     * It sets the observer of the pokemon, the observer of the default, shiny, female and shine
+     * female sprite, the observer of the state of the shiny and gender buttons, the observer of
+     * the list of evolutions, the observer of the list of weaknesses and resistances and the
+     * observer of the error message, that shows a SnackBar with the error message.
+     */
     private fun setObserver() {
         pokemonViewModel.getPokemon.observe(viewLifecycleOwner) {
             configurePokemonTypes(it)
@@ -143,23 +184,7 @@ class PokemonFragment : Fragment() {
             configurePokemonImage(pokemonViewModel.getShinyButton.value!!, pokemonViewModel.getGenderButtons.value!!)
         }
         pokemonViewModel.getTypeRelationList.observe(viewLifecycleOwner) { it ->
-            val typeColors: MutableList<Int> = mutableListOf()
-            val typeStrings: MutableList<String> = mutableListOf()
-            it.forEach {
-                typeColors.add(
-                    resources.getColor(
-                        Resources.getColorByName(it.name), null
-                    )
-                )
-                typeStrings.add(
-                    resources.getString(
-                        Resources.getStringByName(it.name)
-                    )
-                )
-            }
-            typeRelationAdapter.updateColorsList(typeColors.toList())
-            typeRelationAdapter.updateNamesList(typeStrings.toList())
-            typeRelationAdapter.updateTypeList(it)
+            configureTypeRelation(it)
         }
         pokemonViewModel.getStatusMessage.observe(viewLifecycleOwner) {
             if (it.code != Constants.DB_MSGS.SUCCESS && it.code != Constants.API_MSGS.SUCCESS) {
@@ -171,6 +196,45 @@ class PokemonFragment : Fragment() {
         }
     }
 
+    /**
+     * This method configures the weakness and resistances recycler view.
+     *
+     * It sets the colors and names of the types and the list of the type multipliers. The colors
+     * and names are set according to the type multiplier list, and must be passable to the adapter,
+     * because is not possible access Resources outside a Fragment.
+     *
+     * @param typeMultiplierList The list of the type multipliers.
+     */
+    private fun configureTypeRelation(typeMultiplierList: List<TypeMultiplierDTO>) {
+        val typeColors: MutableList<Int> = mutableListOf()
+        val typeStrings: MutableList<String> = mutableListOf()
+        typeMultiplierList.forEach {
+            typeColors.add(
+                resources.getColor(
+                    Resources.getColorByName(it.name), null
+                )
+            )
+            typeStrings.add(
+                resources.getString(
+                    Resources.getStringByName(it.name)
+                )
+            )
+        }
+        typeRelationAdapter.updateColorsList(typeColors.toList())
+        typeRelationAdapter.updateNamesList(typeStrings.toList())
+        typeRelationAdapter.updateTypeList(typeMultiplierList)
+    }
+
+    /**
+     * This method configures the pokemon variety dropdown.
+     *
+     * It sets the adapter of the dropdown and sets a listener to change the pokemon when the user
+     * selects a different variety. If selected a different variety, the pokemon is set to the
+     * selected variety navigating to the pokemon fragment. If the selected variety is the same as
+     * the current pokemon, the pokemon is not changed.
+     *
+     * @param varietyList The list of the pokemon varieties.
+     */
     private fun configureVarietyDropdown(varietyList: List<VarietyEntity>) {
         val dropdownVarieties = binding.dropdownVarieties
         val pokemonNameList = mutableListOf(varietyList.find { it.id == args.pokemonId }?.pokemonName ?: "")
@@ -205,6 +269,15 @@ class PokemonFragment : Fragment() {
         }
     }
 
+    /**
+     * This method configures the pokemon types.
+     *
+     * It sets the pokemon types and colors according to the pokemon type. If the pokemon has two
+     * types, the second type is set and visible. If the pokemon has only one type, the second type
+     * is set to invisible.
+     *
+     * @param pokemonEntity The pokemon entity.
+     */
     private fun configurePokemonTypes(pokemonEntity: PokemonEntity){
         binding.pokemonNumber.text = Converter.idFromUrl(pokemonEntity.speciesUrl).toString().padStart(4, '0')
         binding.pokemonType1.text = resources.getString(Resources.getStringByName(pokemonEntity.typeOne))
@@ -217,6 +290,14 @@ class PokemonFragment : Fragment() {
         }
     }
 
+    /**
+     * This method configures the pokemon stats.
+     *
+     * It sets the pokemon stats and progress bars according to the pokemon stats. The progress bars
+     * are set according to the stats, and the stats are set according to the pokemon stats.
+     *
+     * @param pokemonEntity The pokemon entity.
+     */
     private fun configurePokemonStats(pokemonEntity: PokemonEntity){
         binding.hpValue.text = pokemonEntity.statHp.toString()
         binding.hpBar.progress = pokemonEntity.statHp * 100 / 255
@@ -233,6 +314,16 @@ class PokemonFragment : Fragment() {
 
     }
 
+    /**
+     * This method configures the pokemon gender.
+     *
+     * It controls the visibility of each button. If pokemon has no gender, all buttons are set to
+     * invisible, if pokemons has only male gender, the female button is set to invisible, and if
+     * pokemon has only female gender, the male button is set to invisible. Then a method from
+     * pokemon view model is called to set status to each state.
+     *
+     * @param pokemonEntity The pokemon entity.
+     */
     private fun configurePokemonGender(pokemonEntity: PokemonEntity) {
         when (pokemonEntity.genderRate) {
             -1 -> {
@@ -250,6 +341,14 @@ class PokemonFragment : Fragment() {
         }
     }
 
+    /**
+     * This method configures the shiny button image.
+     *
+     * It controls the image resource of the shiny button. If pokemon is shiny, the shiny button
+     * image is set to checked, if pokemon is not shiny, the shiny button image is set to unchecked.
+     *
+     * @param shineButtonState The shiny button state.
+     */
     private fun configureShinyImage(shineButtonState: Boolean){
         if (shineButtonState) {
             binding.shinyButton.setImageResource(R.drawable.ic_shiny_checked)
@@ -258,6 +357,16 @@ class PokemonFragment : Fragment() {
         }
     }
 
+    /**
+     * This method configures the gender buttons colors.
+     *
+     * If the gender button state is set to male, the male button must has a background color and
+     * icon set to white, and the female button must has a background color set to transparent and
+     * icon set to female color. The logic must reverse otherwise.
+     *
+     * @param genderButtonsState the gender button state according Constants.GENDERS.
+     * @see Constants.GENDERS
+     */
     private fun configureGenderButtons(genderButtonsState: Int) {
         when (genderButtonsState) {
             Constants.GENDERS.MALE -> {
@@ -281,6 +390,17 @@ class PokemonFragment : Fragment() {
         }
     }
 
+    /**
+     * This method configures the pokemon image.
+     *
+     * It displays pokemon image according to shine and gender buttons state. If shine button is
+     * true, the shine image is displayed, if shine button is false, the default image is displayed.
+     * If the gender button state is male, default image is displayed, if female, female image is
+     * displayed. The shine and gender state can be combined.
+     *
+     * @param shineButtonState The shiny button state.
+     * @param genderButtonsState The gender button state.
+     */
     private fun configurePokemonImage(shineButtonState: Boolean, genderButtonsState: Int){
         if(shineButtonState && genderButtonsState != Constants.GENDERS.FEMALE)
             binding.pokemonImage.setImageBitmap(pokemonViewModel.getImgShiny.value)
@@ -293,6 +413,11 @@ class PokemonFragment : Fragment() {
         }
     }
 
+    /**
+     * This method shows a SnackBar with the text passed as parameter.
+     *
+     * @param text The text to show in the SnackBar.
+     */
     private fun showSnackBar(text: String) {
         val snack = Snackbar.make(binding.pokemonFragment, text, Snackbar.LENGTH_SHORT)
         snack.setBackgroundTint(resources.getColor(R.color.red, null))

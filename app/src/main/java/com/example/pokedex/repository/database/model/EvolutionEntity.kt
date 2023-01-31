@@ -6,6 +6,18 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+/**
+ * EvolutionEntity
+ *
+ * This class is used to define the Evolution table in the database. It is used to store the evolution
+ * chain of a pokemon.
+ *
+ * @property id primary key and are the number of pokemon specie.
+ * @property chain used to group the evolutions together.
+ * @property order used to determine the order of the evolutions.
+ * @property pokemonName the name of the pokemon.
+ * @property pokemonImage the image of the pokemon.
+ */
 @Entity(
     tableName = "Evolution",
     indices = [Index(value = ["id"], unique = true), Index(

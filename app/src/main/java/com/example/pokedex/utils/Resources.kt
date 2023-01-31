@@ -1,10 +1,23 @@
 package com.example.pokedex.utils
 
-import android.util.Log
 import com.example.pokedex.R
 
+/**
+ * A Resources class used to get resources.
+ *
+ * This class is used to get some resources that are used in the app like colors and strings,
+ * with no need to create a new instance of the class. It is used to avoid the repetition of code, and
+ * to make the code more readable.
+ */
 class Resources {
     companion object {
+
+        /**
+         * This function is used to get the color of a pokemon type by its name
+         *
+         * @param type The name of the type
+         * @return The color of the type
+         */
         fun getColorByName(type: String): Int {
             return when (type) {
                 "normal" -> R.color.normal_type
@@ -29,6 +42,13 @@ class Resources {
             }
         }
 
+        /**
+         * This function is used to get the string of a pokemon type by its name, very useful for
+         * internationalization.
+         *
+         * @param name The name of the type
+         * @return The string of the type
+         */
         fun getStringByName(name: String): Int {
             return when (name) {
                 "normal" -> R.string.normal
@@ -53,6 +73,12 @@ class Resources {
             }
         }
 
+        /**
+         * This function is used to get the error message of a status message.
+         *
+         * @param statusMessage The status message to get the error message
+         * @return The error message
+         */
         fun getErrorMessageByStatusMessage(statusMessage: StatusMessage): Int {
             when (statusMessage.resource){
                 Constants.RES_MSGS.POKEMON -> {

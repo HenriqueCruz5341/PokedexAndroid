@@ -19,6 +19,21 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * HomeViewModel is the ViewModel of the Home Fragment.
+ *
+ * It is responsible for loading the pokemons from the database and the API. It also filters the list
+ * of pokemons by name or id. It saves the pokemons in the database for offline use.
+ * It class not uses PokemonEntity because it is not necessary to save all the information of the
+ * pokemon in the database. It only saves the id, name and image in a PokemonPageableEntity.
+ *
+ * @property pokemonList the list of pokemons
+ * @property filteredPokemonList the list of filtered pokemons
+ * @property newPokemonList the list of new pokemons
+ * @property lastOffset the offset of the last page loaded
+ * @property lastLimit the limit of the last page loaded
+ * @property statusMessage the status of the request
+ */
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private var pokemonList = MutableLiveData<List<PokemonPageableEntity>>()
     private var filteredPokemonList = MutableLiveData<List<PokemonPageableEntity>>()
@@ -32,6 +47,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val getStatusMessage : MutableLiveData<StatusMessage> get() = statusMessage
 
 
+    /**
+     * This method request the pokemons from the API or database.
+     * If the request is for the first page, it will request the pokemons from the database, because
+     * the pokemons are already saved in the database by SplashScreen.
+     */
     fun loadPokemons(offset: Int, limit: Int) {
         if(lastLimit == limit && lastOffset == offset) return
 
@@ -48,6 +68,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         lastOffset = offset
     }
 
+    /**
+     * This method request the pokemons from the API and calls the method to save the pokemons in the
+     * database. If the request is successful, it will save the pokemons in the database and in the
+     * list of pokemons. If the request is not successful, it will show a message, and the list of
+     * pokemons will be loaded from database, if the database has pokemons.
+     *
+     * @param offset the offset of the page
+     * @param limit the limit of the page
+     */
     private fun requestPokemons(offset: Int, limit: Int) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
         val pokeApi: Call<PageableDto> = apiPokeService.getPokemonPageable(offset , limit)
@@ -74,6 +103,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
+    /**
+     * This method request the pokemons from the database. If the request is successful, the list
+     * of pokemons will be loaded from database. If the request is not successful,
+     * it will show a message according to the error.
+     *
+     * @param offset the offset of the page
+     * @param limit the limit of the page
+     */
     private fun requestPokemonsDatabase(offset: Int, limit: Int) {
         val pageableDAO = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO()
         try {
@@ -89,6 +126,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * This method saves the pokemons in the database. It will check if the pokemon already exists in
+     * the database. If the pokemon exists, it will update the pokemon. If the pokemon does not exist,
+     * it will insert the pokemon. If the request is successful, the pokemon list receives the
+     * new pokemons. If the request is not successful, it will show a message according to the error.
+     *
+     * @param pageablePokemons the list of pokemons to be saved
+     */
     private fun savePokemons(pageablePokemons : PageableDto) {
         val db = ClientDatabase.getDatabase(getApplication()).PokemonPageableDAO()
         for(pokemon in pageablePokemons.results) {
@@ -119,6 +164,17 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * This method searches the pokemon by name or id. If the request is successful, the pokemons is
+     * saved in database and list of filtered pokemons. If the request fails, it will show a message
+     * according to the error, and the filter will be done in the database.
+     * Search in the API is case sensitive and the pokemon name mus be exactly, so it will be
+     * converted to lowercase and the special characters will be replaced by "-". If the search
+     * text is a number, it will be converted to string. If the search text is empty, the list
+     * of filtered pokemons will be empty and nothing happens.
+     *
+     * @param searchText the text to be searched
+     */
     fun searchPokemons(searchText: String){
         var nameOrId = searchText.lowercase().replace("[^a-z\\d]".toRegex(), "-")
         nameOrId = if (nameOrId.toIntOrNull() == null) nameOrId else nameOrId.toInt().toString()
@@ -167,6 +223,16 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
+    /**
+     * This method searches the pokemon by name or id in the database. If the request is successful,
+     * the list of filtered pokemons receives the pokemon. If the request fails, it will show a message
+     * according to the error.
+     * Search in the database is case insensitive and the pokemon name can be partially, so it will
+     * be enclosed by "%". If the search text is a number, it will be converted to int. If the search
+     * text is empty, the list of filtered pokemons will be empty and nothing happens.
+     *
+     * @param searchText the text to be searched
+     */
     private fun searchPokemonsDatabase(searchText: String) {
         if (searchText.isEmpty()) return
 

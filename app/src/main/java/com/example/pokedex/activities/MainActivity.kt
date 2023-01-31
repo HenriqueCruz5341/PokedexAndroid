@@ -7,6 +7,17 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.pokedex.R
 import com.example.pokedex.databinding.ActivityMainBinding
 
+/**
+ * Main activity of the app.
+ *
+ * It contains the bottom navigation view.
+ * It also contains the navigation graph.
+ * The navigation graph contains the fragments that are displayed in the main activity.
+ * The navigation graph is used to navigate between the fragments.
+ * The navigation graph is also used to pass data between the fragments.
+ *
+ * @property binding The binding object of the activity.
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
