@@ -27,6 +27,7 @@ import retrofit2.Response
  * It class not uses PokemonEntity because it is not necessary to save all the information of the
  * pokemon in the database. It only saves the id, name and image in a PokemonPageableEntity.
  *
+ * @param application the application context
  * @property pokemonList the list of pokemons
  * @property filteredPokemonList the list of filtered pokemons
  * @property newPokemonList the list of new pokemons
