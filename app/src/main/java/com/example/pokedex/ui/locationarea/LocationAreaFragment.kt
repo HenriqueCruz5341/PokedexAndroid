@@ -64,6 +64,9 @@ class LocationAreaFragment : Fragment() {
         return root
     }
 
+    /**
+     * This method set the observers of the LocationAreaFragment.
+     */
     private fun setObserver() {
         locationAreaViewModel.getLocationAreas().observe(viewLifecycleOwner, Observer {
             locationAreaAdapter.updateRegionList(it)
