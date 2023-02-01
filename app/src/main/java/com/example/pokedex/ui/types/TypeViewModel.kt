@@ -129,7 +129,7 @@ class TypeViewModel(application: Application) : AndroidViewModel(application) {
      * selected types.
      */
     private fun getAllAttack() {
-        getAll(typeAttackList, { dbRelation.getAttack(it) }, { dbTypes.getById(it.defense_id) })
+        getAll(typeAttackList, { dbRelation.getByAttackId(it) }, { dbTypes.getById(it.defense_id) })
     }
 
     /**
@@ -139,7 +139,7 @@ class TypeViewModel(application: Application) : AndroidViewModel(application) {
      * selected types.
      */
     private fun getAllDefense() {
-        getAll(typeDefenseList, { dbRelation.getDefense(it) }, { dbTypes.getById(it.attack_id) })
+        getAll(typeDefenseList, { dbRelation.getByDefenseId(it) }, { dbTypes.getById(it.attack_id) })
     }
 
     // TODO refactor
