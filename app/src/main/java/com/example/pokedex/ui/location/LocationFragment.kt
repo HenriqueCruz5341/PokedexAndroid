@@ -72,6 +72,14 @@ class LocationFragment : Fragment() {
         return root
     }
 
+    /**
+     * This method set the observers of the LocationFragment.
+     *
+     * When the locationList get updated, it should update the adapter items, with the new items.
+     * There is also a filteredLocationList that update the same adapter. If user search in the bar,
+     * it filter the locationList with the contained keyword, if the search bar is empty, it populate
+     * the adapter with all items.
+     */
     private fun setObserver() {
         locationViewModel.getLocations().observe(viewLifecycleOwner, Observer {
             locationAdapter.updateRegionList(it)
