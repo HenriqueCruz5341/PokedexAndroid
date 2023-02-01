@@ -21,7 +21,6 @@ class TypeFragment : Fragment() {
     private val typeAdapter = ListTypesAdapter()
     private val typeDefenseAdapter = ListTypeRelationAdapter()
     private val typeAttackAdapter = ListTypeRelationAdapter()
-    private var selectedType: TypeEntity? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -84,7 +83,7 @@ class TypeFragment : Fragment() {
             typeAdapter.updateTypeList(it)
         })
 
-        typeViewModel.getTypeEffectiveness().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getTypeAttackList().observe(viewLifecycleOwner, Observer {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {it2 ->
@@ -100,7 +99,7 @@ class TypeFragment : Fragment() {
             typeAttackAdapter.updateTypeList(it)
         })
 
-        typeViewModel.getTypeWeakness().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getTypeDefenseList().observe(viewLifecycleOwner, Observer {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {it2 ->
