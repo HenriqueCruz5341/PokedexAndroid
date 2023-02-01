@@ -60,6 +60,11 @@ class RegionFragment : Fragment() {
         return root
     }
 
+    /**
+     * This method set the observers of the RegionFragment.
+     *
+     * When the regionList get updated, it should update the adapter items, with the new items.
+     */
     private fun setObserver() {
         regionViewModel.getRegions().observe(viewLifecycleOwner, Observer {
             regionAdapter.updateRegionList(it)
