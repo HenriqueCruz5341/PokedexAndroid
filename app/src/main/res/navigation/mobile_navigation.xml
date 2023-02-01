@@ -22,13 +22,13 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.pokedex.ui.types.TypeFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_types"
         tools:layout="@layout/fragment_types" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.pokedex.ui.region.RegionFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_regions"
         tools:layout="@layout/fragment_region" >
         <action
             android:id="@+id/action_navigation_notifications_to_navigation_location"
@@ -37,7 +37,7 @@
     <fragment
         android:id="@+id/navigation_location"
         android:name="com.example.pokedex.ui.location.LocationFragment"
-        android:label="@string/title_notifications" >
+        android:label="@string/title_regions" >
         <argument
             android:name="regionId"
             app:argType="integer" />
@@ -51,7 +51,7 @@
     <fragment
         android:id="@+id/navigation_location_area"
         android:name="com.example.pokedex.ui.locationarea.LocationAreaFragment"
-        android:label="@string/title_notifications">
+        android:label="@string/title_regions">
         <argument
             android:name="locationId"
             app:argType="integer" />
@@ -65,7 +65,7 @@
     <fragment
         android:id="@+id/navigation_location_pokemon"
         android:name="com.example.pokedex.ui.locationpokemon.LocationPokemonFragment"
-        android:label="@string/title_notifications">
+        android:label="@string/title_regions">
         <argument
             android:name="locationAreaId"
             app:argType="integer" />
