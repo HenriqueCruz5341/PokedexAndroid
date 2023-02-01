@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.pokedex.repository.api.client.ClientPokeApi
+import com.example.pokedex.repository.api.model.region.EncounterDto
 import com.example.pokedex.repository.api.model.region.LocationAreaDto
 import com.example.pokedex.repository.api.service.PokeApiService
 import com.example.pokedex.repository.database.model.PokemonPageableEntity
@@ -17,10 +18,21 @@ class LocationPokemonViewModel(application: Application) : AndroidViewModel(appl
 
     var pokemonPageableItemList = MutableLiveData<List<PokemonPageableEntity>>()
 
+    /**
+     * This method returns a LiveData of the pokemonPageableItemList.
+     *
+     * @return LiveData of the pokemonPageableItemList, a List of PokemonPageableEntity.
+     */
     fun getPokemon(): LiveData<List<PokemonPageableEntity>> {
         return pokemonPageableItemList
     }
 
+    /**
+     * This method load all location pokemon from the API to the pokemonPageableItemList.
+     *
+     * The name loadLocationArea means that it load a location area data by id. A Location Area
+     * contain many pokemon.
+     */
     fun loadLocationArea(locationAreaId: Int) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
         val pokeApi: Call<LocationAreaDto> = apiPokeService.getLocationAreaById(locationAreaId)
@@ -33,25 +45,33 @@ class LocationPokemonViewModel(application: Application) : AndroidViewModel(appl
                     val resp = response.body() as LocationAreaDto
                     val pokemonPageableList: MutableList<PokemonPageableEntity> = mutableListOf()
                     resp.encounters.forEach {
-                        val pokemon = it.pokemon!!
-                        val pokemonId = Converter.idFromUrl(pokemon.url)
-                        pokemonPageableList.add(PokemonPageableEntity().apply {
-                            id = pokemonId
-                            name = Converter.beautifyName(pokemon.name)
-                            image = Converter.urlImageFromId(pokemonId)
-                            url = pokemon.url
-                            count = 0
-                        })
+                        pokemonPageableList.add(convertEncounterDtoToPokemonPageableEntity(it))
                     }
                     pokemonPageableItemList.value = pokemonPageableList.toList()
                 }
             }
 
             override fun onFailure(call: Call<LocationAreaDto>, t: Throwable) {
-                // TODO get from database
-                //requestPokemonDatabase(pokemonId)
                 println("FAIL")
             }
         })
+    }
+
+    /**
+     * This method converts a EncounterDto to a PokemonPageableEntity
+     *
+     * @param pokemon the EncounterDto to be converted
+     * @return the PokemonPageableEntity resultant
+     */
+    private fun convertEncounterDtoToPokemonPageableEntity(pokemon: EncounterDto): PokemonPageableEntity {
+        val pokemonPageable = pokemon.pokemon!!
+        val pokemonId = Converter.idFromUrl(pokemonPageable.url)
+        return PokemonPageableEntity().apply {
+            id = pokemonId
+            name = Converter.beautifyName(pokemonPageable.name)
+            image = Converter.urlImageFromId(pokemonId)
+            url = pokemonPageable.url
+            count = 0
+        }
     }
 }

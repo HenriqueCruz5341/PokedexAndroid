@@ -61,6 +61,9 @@ class LocationPokemonFragment : Fragment() {
         return root
     }
 
+    /**
+     * This method set the observers of the LocationPokemonFragment.
+     */
     private fun setObserver() {
         locationPokemonViewModel.getPokemon().observe(viewLifecycleOwner, Observer {
             pokemonAdapter.setItems(it)
