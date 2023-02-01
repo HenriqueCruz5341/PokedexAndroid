@@ -2,9 +2,9 @@
     <string name="app_name" translatable="false">Pokedex</string>
     <string name="title_lock_pokeball" translatable="false">Lock pokeball</string>
     <string name="title_home" translatable="false">Home</string>
-    <string name="title_types" translatable="false">Types</string>
-    <string name="title_regions" translatable="false">Regions</string>
-    <string name="title_location" translatable="false">Location</string>
+    <string name="title_types">Types</string>
+    <string name="title_regions">Regions</string>
+    <string name="title_location">Location</string>
     <string name="title_activity_splash_screen" translatable="false">SplashScreenActivity</string>
     <string name="title_activity_main" translatable="false">MainActivity</string>
     <string name="pokemon_image" translatable="false">PokemonImage</string>
