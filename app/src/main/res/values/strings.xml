@@ -19,6 +19,7 @@
     <string name="pokemon_type" translatable="false">PokemonType</string>
     <string name="text_choose_type">Choose your type(s)</string>
     <string name="text_choose_region">Choose a region</string>
+    <string name="text_pokemon_area">Pokemons in this area</string>
     <string name="text_defense">Defender</string>
     <string name="text_attack">Attacker</string>
     <string name="text_region_name" translatable="false">Region</string>

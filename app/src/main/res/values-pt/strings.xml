@@ -14,6 +14,7 @@
     <string name="value_status">000</string>
     <string name="text_choose_region">Escolha uma região</string>
     <string name="text_choose_type">Escolha seu(s) tipo(s)</string>
+    <string name="text_pokemon_area">Pokemons nessa área</string>
     <string name="text_defense">Denfensor</string>
     <string name="text_attack">Atacante</string>
     <string name="weakness_and_resistances">Fraquezas e Resistências</string>
