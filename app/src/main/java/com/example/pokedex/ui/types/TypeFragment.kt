@@ -82,7 +82,7 @@ class TypeFragment : Fragment() {
             typeAdapter.updateTypeList(it)
         }
 
-        typeViewModel.getTypeEffectiveness().observe(viewLifecycleOwner) {
+        typeViewModel.getTypeAttackList().observe(viewLifecycleOwner) {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {it2 ->
@@ -98,7 +98,7 @@ class TypeFragment : Fragment() {
             typeAttackAdapter.updateTypeList(it)
         }
 
-        typeViewModel.getTypeWeakness().observe(viewLifecycleOwner) {
+        typeViewModel.getTypeDefenseList().observe(viewLifecycleOwner) {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {it2 ->

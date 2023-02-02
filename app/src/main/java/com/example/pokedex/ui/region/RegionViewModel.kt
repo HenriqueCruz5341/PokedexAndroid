@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.example.pokedex.repository.api.client.ClientPokeApi
 import com.example.pokedex.repository.api.model.PageableDto
 import com.example.pokedex.repository.api.model.PageableItemDto
-import com.example.pokedex.repository.api.model.region.RegionDto
 import com.example.pokedex.repository.api.service.PokeApiService
 import retrofit2.Call
 import retrofit2.Callback

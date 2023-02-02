@@ -78,6 +78,13 @@ interface TypeRelationDAO {
     @Query("SELECT * FROM TypeRelations WHERE attack_id = :attack_id AND defense_id = :defense_id")
     fun getByAttackAndDefenseId(attack_id: Int, defense_id: Int): TypeRelationEntity?
 
+    /**
+     * Get a List of TypeRelationEntity by its defense and attack name.
+     *
+     * @param typeOne name of pokemon type one.
+     * @param typeTwo name of pokemon type two.
+     * @return List of TypeRelationEntity with the given names.
+     */
     @Query("SELECT t.name AS attack, t2.name AS defense, tr.damage_multiplier AS damage_multiplier " +
             "FROM Types AS t INNER JOIN TypeRelations AS tr ON t.id = tr.attack_id INNER JOIN Types AS t2 ON tr.defense_id = t2.id " +
             "WHERE t2.name = :typeOne OR t2.name = :typeTwo ORDER BY t.name")
