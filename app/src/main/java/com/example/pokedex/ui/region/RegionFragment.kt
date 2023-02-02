@@ -5,10 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.pokedex.databinding.FragmentRegionBinding
 import com.example.pokedex.repository.api.model.PageableItemDto
 import com.example.pokedex.ui.recycleView.pageableitem.ListPageableItemAdapter
@@ -37,7 +36,7 @@ class RegionFragment : Fragment() {
         _binding = FragmentRegionBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.recyclerListRegion.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerListRegion.layoutManager = GridLayoutManager(context, 2)
         binding.recyclerListRegion.adapter = regionAdapter
 
         val listener = object : OnPageableItemListener {
@@ -61,9 +60,9 @@ class RegionFragment : Fragment() {
     }
 
     private fun setObserver() {
-        regionViewModel.getRegions().observe(viewLifecycleOwner, Observer {
+        regionViewModel.getRegions().observe(viewLifecycleOwner) {
             regionAdapter.updateRegionList(it)
-        })
+        }
     }
 
     override fun onDestroyView() {

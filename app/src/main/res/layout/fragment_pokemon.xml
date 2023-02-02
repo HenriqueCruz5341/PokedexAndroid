@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+        >
 
         <ImageView
             android:id="@+id/back_image"
@@ -19,6 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:src="@drawable/ic_back"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/back_image"
             />
 
@@ -30,6 +31,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:orientation="vertical"
+            android:layout_marginTop="8dp"
             android:layout_marginStart="48dp">
 
             <Spinner
@@ -397,7 +399,6 @@
             android:text="@string/evolution_line"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/speed_line"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="16dp"
@@ -419,7 +420,6 @@
             android:text="@string/weakness_and_resistances"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/recycler_list_evolutions"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="16dp"

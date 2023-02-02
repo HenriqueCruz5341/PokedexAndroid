@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -40,6 +39,8 @@ class LocationPokemonFragment : Fragment() {
         _binding = FragmentLocationPokemonBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        binding.textRegionName.text = Converter.beautifyName(args.regionName)
+        binding.textLocationName.text = Converter.beautifyName(args.locationName)
         binding.textLocationAreaName.text = Converter.beautifyName(args.locationAreaName)
 
         binding.recyclerListLocationPokemon.layoutManager = GridLayoutManager(context, 3, RecyclerView.VERTICAL, false)
@@ -62,9 +63,9 @@ class LocationPokemonFragment : Fragment() {
     }
 
     private fun setObserver() {
-        locationPokemonViewModel.getPokemon().observe(viewLifecycleOwner, Observer {
+        locationPokemonViewModel.getPokemon().observe(viewLifecycleOwner) {
             pokemonAdapter.setItems(it)
-        })
+        }
     }
 
     override fun onDestroyView() {

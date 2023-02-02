@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.pokedex.databinding.FragmentTypesBinding
@@ -21,7 +20,6 @@ class TypeFragment : Fragment() {
     private val typeAdapter = ListTypesAdapter()
     private val typeDefenseAdapter = ListTypeRelationAdapter()
     private val typeAttackAdapter = ListTypeRelationAdapter()
-    private var selectedType: TypeEntity? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -61,7 +59,7 @@ class TypeFragment : Fragment() {
     }
 
     private fun setObserver() {
-        typeViewModel.getTypeList().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getTypeList().observe(viewLifecycleOwner) {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {
@@ -80,9 +78,9 @@ class TypeFragment : Fragment() {
             typeAdapter.updateNames(typeStrings.toList())
             typeAdapter.updateTypeList(it)
 
-        })
+        }
 
-        typeViewModel.getTypeEffectiveness().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getTypeEffectiveness().observe(viewLifecycleOwner) {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {
@@ -100,9 +98,9 @@ class TypeFragment : Fragment() {
             typeAttackAdapter.updateColorsList(typeColors.toList())
             typeAttackAdapter.updateNamesList(typeStrings.toList())
             typeAttackAdapter.updateTypeList(it)
-        })
+        }
 
-        typeViewModel.getTypeWeakness().observe(viewLifecycleOwner, Observer {
+        typeViewModel.getTypeWeakness().observe(viewLifecycleOwner) {
             val typeColors: MutableList<Int> = mutableListOf()
             val typeStrings: MutableList<String> = mutableListOf()
             it.forEach {
@@ -120,18 +118,27 @@ class TypeFragment : Fragment() {
             typeDefenseAdapter.updateColorsList(typeColors.toList())
             typeDefenseAdapter.updateNamesList(typeStrings.toList())
             typeDefenseAdapter.updateTypeList(it)
-        })
+        }
 
-        typeViewModel.getSelectedTypeList().observe(viewLifecycleOwner, Observer {
-            if(it.size != 1) {
+        typeViewModel.getSelectedTypeList().observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                binding.recyclerListDefense.visibility = View.GONE
+                binding.textDefense.visibility = View.GONE
                 binding.recyclerListAttack.visibility = View.GONE
                 binding.textAttack.visibility = View.GONE
-            } else {
+            } else if (it.size == 1) {
+                binding.recyclerListDefense.visibility = View.VISIBLE
+                binding.textDefense.visibility = View.VISIBLE
                 binding.recyclerListAttack.visibility = View.VISIBLE
                 binding.textAttack.visibility = View.VISIBLE
+            } else {
+                binding.recyclerListDefense.visibility = View.VISIBLE
+                binding.textDefense.visibility = View.VISIBLE
+                binding.recyclerListAttack.visibility = View.GONE
+                binding.textAttack.visibility = View.GONE
             }
             typeAdapter.select(it)
-        })
+        }
     }
 
     override fun onDestroyView() {

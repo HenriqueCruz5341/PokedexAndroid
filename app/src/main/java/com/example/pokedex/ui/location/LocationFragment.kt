@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.pokedex.databinding.FragmentLocationBinding
 import com.example.pokedex.repository.api.model.PageableItemDto
 import com.example.pokedex.ui.recycleView.pageableitem.ListPageableItemAdapter
@@ -41,13 +40,14 @@ class LocationFragment : Fragment() {
 
         binding.textRegionName.text = Converter.beautifyName(args.regionName)
 
-        binding.recyclerListLocation.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerListLocation.layoutManager = GridLayoutManager(context, 2)
         binding.recyclerListLocation.adapter = locationAdapter
 
         val listener = object : OnPageableItemListener {
             override fun onClick(region: PageableItemDto) {
                 val action = LocationFragmentDirections
                     .actionNavigationLocationToNavigationLocationArea(
+                        args.regionName,
                         Converter.idFromUrl(region.url),
                         region.name
                     )
@@ -73,16 +73,16 @@ class LocationFragment : Fragment() {
     }
 
     private fun setObserver() {
-        locationViewModel.getLocations().observe(viewLifecycleOwner, Observer {
+        locationViewModel.getLocations().observe(viewLifecycleOwner) {
             locationAdapter.updateRegionList(it)
-        })
+        }
 
-        locationViewModel.getFiltered().observe(viewLifecycleOwner, Observer {
-            if(it.isNotEmpty())
+        locationViewModel.getFiltered().observe(viewLifecycleOwner) {
+            if (it.isNotEmpty())
                 locationAdapter.updateRegionList(it)
             else
                 locationAdapter.updateRegionList(locationViewModel.getLocations().value!!)
-        })
+        }
     }
 
     override fun onDestroyView() {

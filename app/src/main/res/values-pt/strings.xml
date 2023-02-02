@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="title_pokedex">Pokedex</string>
+    <string name="title_types">Tipos</string>
+    <string name="title_regions">Regiões</string>
     <string name="text_weakness">Fraquezas</string>
     <string name="search_pokemon_hint">Buscar por nome ou id</string>
     <string name="hp_status">PS: </string>
@@ -9,6 +12,8 @@
     <string name="sp_def_status">Def. Es.: </string>
     <string name="speed_status">Velocidade: </string>
     <string name="value_status">000</string>
+    <string name="text_choose_region">Escolha uma região</string>
+    <string name="text_choose_type">Escolha seu(s) tipo(s)</string>
     <string name="text_defense">Denfensor</string>
     <string name="text_attack">Atacante</string>
     <string name="weakness_and_resistances">Fraquezas e Resistências</string>

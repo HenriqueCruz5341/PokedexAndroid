@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.pokedex.ui.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_pokedex"
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_navigation_home_to_pokemonFragment"
@@ -22,22 +22,26 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.pokedex.ui.types.TypeFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_types"
         tools:layout="@layout/fragment_types" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.pokedex.ui.region.RegionFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_regions"
         tools:layout="@layout/fragment_region" >
         <action
             android:id="@+id/action_navigation_notifications_to_navigation_location"
-            app:destination="@id/navigation_location" />
+            app:destination="@id/navigation_location"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/navigation_location"
         android:name="com.example.pokedex.ui.location.LocationFragment"
-        android:label="@string/title_notifications" >
+        android:label="@string/title_regions" >
         <argument
             android:name="regionId"
             app:argType="integer" />
@@ -46,12 +50,19 @@
             app:argType="string" />
         <action
             android:id="@+id/action_navigation_location_to_navigation_location_area"
-            app:destination="@id/navigation_location_area" />
+            app:destination="@id/navigation_location_area"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/navigation_location_area"
         android:name="com.example.pokedex.ui.locationarea.LocationAreaFragment"
-        android:label="@string/title_notifications">
+        android:label="@string/title_regions">
+        <argument
+            android:name="regionName"
+            app:argType="string" />
         <argument
             android:name="locationId"
             app:argType="integer" />
@@ -60,12 +71,22 @@
             app:argType="string" />
         <action
             android:id="@+id/action_navigation_location_area_to_navigation_location_pokemon"
-            app:destination="@id/navigation_location_pokemon" />
+            app:destination="@id/navigation_location_pokemon"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/navigation_location_pokemon"
         android:name="com.example.pokedex.ui.locationpokemon.LocationPokemonFragment"
-        android:label="@string/title_notifications">
+        android:label="@string/title_regions">
+        <argument
+            android:name="regionName"
+            app:argType="string" />
+        <argument
+            android:name="locationName"
+            app:argType="string" />
         <argument
             android:name="locationAreaId"
             app:argType="integer" />
@@ -74,7 +95,11 @@
             app:argType="string" />
         <action
             android:id="@+id/action_navigation_location_pokemon_to_pokemonFragment"
-            app:destination="@id/pokemonFragment" />
+            app:destination="@id/pokemonFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@anim/slide_down"/>
     </fragment>
     <fragment
         android:id="@+id/pokemonFragment"
