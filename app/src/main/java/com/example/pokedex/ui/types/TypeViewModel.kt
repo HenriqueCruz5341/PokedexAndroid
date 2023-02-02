@@ -10,6 +10,21 @@ import com.example.pokedex.repository.database.model.TypeEntity
 import com.example.pokedex.repository.database.model.TypeRelationEntity
 import com.example.pokedex.utils.Constants
 
+/**
+ * TypeViewModel is the ViewModel of the TypeFragment.
+ *
+ * It is responsible for loading the type and type relation from the database.
+ *
+ * @property typeList the list of pokemon types.
+ * @property typeDefenseList the list of pokemon types and its multipliers as if the selected type
+ * is a defender pokemon.
+ * @property typeAttackList the list of pokemon types and its multipliers as if the selected type
+ * is a attacker pokemon.
+ * @property selectedTypes mutable list of the types that are current selected, max size is 2.
+ * @property selectedTypesList the limit of selected types to update to the TypeFragment.
+ * @property dbTypes TypeDAO database.
+ * @property dbRelation TypeRelationDAO database.
+ */
 class TypeViewModel(application: Application) : AndroidViewModel(application) {
     private var listMsg = MutableLiveData<Int>()
     private var typeList = MutableLiveData<List<TypeEntity>>()
@@ -25,22 +40,45 @@ class TypeViewModel(application: Application) : AndroidViewModel(application) {
         return listMsg
     }
 
+    /**
+     * This method returns a LiveData of the typeList.
+     *
+     * @return LiveData of the typeList, a List of TypeEntity.
+     */
     fun getTypeList(): LiveData<List<TypeEntity>> {
         return typeList
     }
 
-    fun getTypeEffectiveness(): LiveData<List<TypeMultiplierDTO>> {
+    /**
+     * This method returns a LiveData of the typeAttackList.
+     *
+     * @return LiveData of the typeAttackList, a List of TypeMultiplierDTO.
+     */
+    fun getTypeAttackList(): LiveData<List<TypeMultiplierDTO>> {
         return typeAttackList
     }
 
-    fun getTypeWeakness(): LiveData<List<TypeMultiplierDTO>> {
+    /**
+     * This method returns a LiveData of the typeDefenseList.
+     *
+     * @return LiveData of the typeDefenseList, a List of TypeMultiplierDTO.
+     */
+    fun getTypeDefenseList(): LiveData<List<TypeMultiplierDTO>> {
         return typeDefenseList
     }
 
+    /**
+     * This method returns a LiveData of the selectedTypesList.
+     *
+     * @return LiveData of the selectedTypesList, a List of TypeEntity.
+     */
     fun getSelectedTypeList(): LiveData<List<TypeEntity>> {
         return selectedTypesList
     }
 
+    /**
+     * This method load all pokemon types from the database to the typeList.
+     */
     fun getAllTypes() {
         val db = ClientDatabase.getDatabase(getApplication()).TypeDAO()
         try {
@@ -56,23 +94,68 @@ class TypeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * This method is called when user select a pokemon type.
+     *
+     * It update the selectedTypesList, typeAttackList and typeDefenseList.
+     * If user select a type that was not previously selected, it is added to the selectedTypesList,
+     * but only if selectedTypes size is less than 2, if size is 2, no types are added.
+     * If user select an already selected type, that type is deselected and removed from
+     * selectedTypes.
+     *
+     * @param type pokemon type that user selected
+     */
     fun userSelectType(type: TypeEntity) {
         if (selectedTypes.isNotEmpty()) {
             if (type in selectedTypes) {
                 selectedTypes.remove(type)
-                getAllEffectiveness()
-                getAllWeakness()
+                getAllAttack()
+                getAllDefense()
                 selectedTypesList.value = selectedTypes.toList()
                 return
             }
             if (selectedTypes.size >= 2) return
         }
         selectedTypes.add(type)
-        getAllEffectiveness()
-        getAllWeakness()
+        getAllAttack()
+        getAllDefense()
         selectedTypesList.value = selectedTypes.toList()
     }
 
+    /**
+     * This method update the typeAttackList.
+     *
+     * It calls the general getAll method to update the list with the new values depending on the
+     * selected types.
+     */
+    private fun getAllAttack() {
+        getAll(typeAttackList, { dbRelation.getByAttackId(it) }, { dbTypes.getById(it.defense_id) })
+    }
+
+    /**
+     * This method update the typeDefenseList.
+     *
+     * It calls the general getAll method to update the list with the new values depending on the
+     * selected types.
+     */
+    private fun getAllDefense() {
+        getAll(typeDefenseList, { dbRelation.getByDefenseId(it) }, { dbTypes.getById(it.attack_id) })
+    }
+
+    // TODO refactor
+    /**
+     * This method update a TypeMultiplierDTO list with its respective values from database.
+     *
+     * It get a list of TypeRelationEntity with the selected pokemon id, same is done if a second
+     * pokemon type was selected. It add the attack/defense pokemon with the found multiplier to a
+     * TypeMultiplierDTO list, than if a second pokemon type is selected it adds the additional
+     * multipliers or change the multiplier if the type is in the list, than update the listToChange
+     * with the resultant value.
+     *
+     * @param listToChange list of TypeMultiplierDTO to be updated with the new values
+     * @param typeFunctionFirst callback function to get a list of TypeRelationEntity with a given id
+     * @param typeFunctionSecond callback function to get a TypeEntity with a given id
+     */
     private fun getAll(listToChange: MutableLiveData<List<TypeMultiplierDTO>>, typeFunctionFirst: (selectId: Int)->List<TypeRelationEntity>, typeFunctionSecond: (typeRelation: TypeRelationEntity) -> TypeEntity?) {
         if(selectedTypes.isEmpty()) {
             listToChange.value = listOf()
@@ -92,11 +175,12 @@ class TypeViewModel(application: Application) : AndroidViewModel(application) {
                     if (type != null)
                         resp.add(TypeMultiplierDTO(type.name, it.multiplaier))
                 }
+
                 if (attackSecondType != null) {
                     attackSecondType.forEach {
                         val type = typeFunctionSecond.invoke(it)
                         if (type != null) {
-                            val aux = resp.find { it.name == type.name }
+                            val aux = resp.find {it2 -> it2.name == type.name }
                             if (aux != null)
                                 aux.multiplier *= it.multiplaier
                             else
@@ -109,13 +193,5 @@ class TypeViewModel(application: Application) : AndroidViewModel(application) {
         } catch (e: Exception) {
             listMsg.value = Constants.DB_MSGS.FAIL
         }
-    }
-
-    private fun getAllEffectiveness() {
-        getAll(typeAttackList, { dbRelation.getAttack(it) }, { dbTypes.getById(it.defense_id) })
-    }
-
-    private fun getAllWeakness() {
-        getAll(typeDefenseList, { dbRelation.getDefense(it) }, { dbTypes.getById(it.attack_id) })
     }
 }

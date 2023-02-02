@@ -15,10 +15,21 @@ class LocationAreaViewModel : ViewModel() {
 
     var locationAreaPageableItemList = MutableLiveData<List<PageableItemDto>>()
 
+    /**
+     * This method returns a LiveData of the locationAreaPageableItemList.
+     *
+     * @return LiveData of the locationAreaPageableItemList, a List of PageableItemDto.
+     */
     fun getLocationAreas(): LiveData<List<PageableItemDto>> {
         return locationAreaPageableItemList
     }
 
+    /**
+     * This method load all locations areas from the API to the locationAreaPageableItemList.
+     *
+     * The name loadLocation means that it load a location data by id. A Location contain many
+     * location areas.
+     */
     fun loadLocation(id: Int) {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
         val pokeApi: Call<LocationDto> = apiPokeService.getLocationById(id)

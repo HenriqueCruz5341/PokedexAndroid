@@ -5,6 +5,15 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+/**
+ * TypeEntity
+ *
+ * This class is used to define the Types table in the database. It is used to store a pokemon
+ * types. This is used for type damage calculation.
+ *
+ * @property id primary key, type unique identifier.
+ * @property name the name of the type.
+ */
 @Entity(tableName="Types", indices = [Index(value = ["id"], unique = true)])
 class TypeEntity {
     @PrimaryKey(autoGenerate = true)

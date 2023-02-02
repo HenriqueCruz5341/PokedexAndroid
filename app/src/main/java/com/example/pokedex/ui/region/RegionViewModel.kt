@@ -16,10 +16,18 @@ class RegionViewModel : ViewModel() {
 
     var regionPageableItemList = MutableLiveData<List<PageableItemDto>>()
 
+    /**
+     * This method returns a LiveData of the regionPageableItemList.
+     *
+     * @return LiveData of the regionPageableItemList, a List of PageableItemDto.
+     */
     fun getRegions(): LiveData<List<PageableItemDto>> {
         return regionPageableItemList
     }
 
+    /**
+     * This method load all regions from the API to the regionPageableItemList.
+     */
     fun loadRegions() {
         val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
         val pokeApi: Call<PageableDto> = apiPokeService.getRegionPageable()
@@ -35,30 +43,6 @@ class RegionViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<PageableDto>, t: Throwable) {
-                // TODO get from database
-                //requestPokemonDatabase(pokemonId)
-                println("FAIL")
-            }
-        })
-    }
-
-    fun getRegion(id: Int) {
-        val apiPokeService = ClientPokeApi.createService(PokeApiService::class.java)
-        val pokeApi: Call<RegionDto> = apiPokeService.getRegionById(id)
-        pokeApi.enqueue(object : Callback<RegionDto> {
-            override fun onResponse(
-                call: Call<RegionDto>,
-                response: Response<RegionDto>,
-            ) {
-                if(response.body() != null) {
-                    val resp = response.body() as RegionDto
-                    val locationsList: List<PageableItemDto> = resp.locations
-                }
-            }
-
-            override fun onFailure(call: Call<RegionDto>, t: Throwable) {
-                // TODO get from database
-                //requestPokemonDatabase(pokemonId)
                 println("FAIL")
             }
         })
