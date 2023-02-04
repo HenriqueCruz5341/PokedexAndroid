@@ -14,7 +14,7 @@ O App tem uma navegação em barra inferior, com três telas principais, que rep
 			
     | Tela Home   | Tela Home com busca |
     |:--------:|:--------:|
-    | <img width="200px" src="screenshots/tela_home.jpg"/> | <img width="200px" src="screenshots/tela_home.jpg"/> | 
+    | <img width="200px" src="screenshots/tela_home.jpg"/> | <img width="200px" src="screenshots/tela_home1.jpg"/> | 
 
     
  - ### Visualizar características de Pokemon
