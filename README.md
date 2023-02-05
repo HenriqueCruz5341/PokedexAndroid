@@ -1,7 +1,23 @@
-Pokedex App
-====================================
+# Pokedex App
+![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-0095D5?&style=for-the-badge&logo=kotlin&logoColor=white)
 
 Esse é um App de Pokedex que permite que o usuário navegue por todos os Pokemon existentes na [PokeAPI](https://pokeapi.co/), e possa visualizar diversas características acerca desses Pokemon. O usuário que a aplicação atende são pessoas que jogam os jogos da franquia, ou que são simplesmente fãs, e gostam de saber mais sobre as características e curiosidades dos monstrinhos.
+
+## Conteúdo
+- [Conteúdo](#conteúdo)
+- [Versão](#versão)
+- [Funcionalidades](#funcionalidades)
+	- [Visualizar lista de Pokemon](#visualizar-lista-de-pokemon)
+	- [Visualizar características de Pokemon](#visualizar-características-de-pokemon)
+	- [Calculadora de tipos](#calculadora-de-tipos)
+	- [Pokemon de cada região](#pokemon-de-cada-região)
+- [Particularidades](#particularidades)
+	- [Funcionalidades](#funcionalidades-1)
+	- [Técnicas](#técnicas)
+- [Instalação](#instalação)
+- [Demonstração](#demonstração)
+- [Autores](#autores)
 
 ## Versão
 O App foi desenvolvido utilizando para a versão [Android Oreo](https://developer.android.com/about/versions/oreo) (8.0), e que utiliza o Sdk versão 26. Com isso todas as versões superiores à essa do Android suportam a aplicação.
@@ -50,3 +66,16 @@ O App tem uma navegação em barra inferior, com três telas principais, que rep
 
 ## Instalação
 Para utilizar o App, basta clonar o repositório e abrir a pasta no [Android Studio](https://developer.android.com/studio), nele você conseguirá executar o App em um emulador da própria IDE, no seu celular (conectando com a opção de debug) ou gerar o Apk para instalação direto am qualquer aparelho Android.
+
+## Demonstração
+Clicando na imagem abaixo, é possível ver um vídeo do aplicativo funcionando.
+
+<a href="https://youtu.be/2MRwsXhhO18">
+	<img width="200px" src="https://img.youtube.com/vi/2MRwsXhhO18/0.jpg"/>
+</a>
+
+
+## Autores
+
+- **[@henriquecruz5341](https://github.com/henriquecruz5341)**
+- **[@riquefr](https://github.com/riquefr)**
